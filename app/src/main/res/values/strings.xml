@@ -83,4 +83,29 @@
     <string name="desc">Description</string>
     <string name="remarks_title">Add some Description or remark about the visit</string>
     <string name="total_time">Total Time</string>
+
+<!--added new strings-->
+    <string name="generic_error_and_retry">Oops.. Something went wrong. Try again?</string>
+    <string name="email_hint">Email Address</string>
+    <string name="password_hint2">Password</string>
+    <string name="email_address_validity_msg">Please enter valid email-address</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="phone_number_hint">Phone Number</string>
+    <string name="default_mandatory_field_messgae">Field is required.</string>
+    <string name="first_name_validity_msg">Please enter valid first-name</string>
+    <string name="last_name_validity_msg">Please enter valid last-name</string>
+    <string name="phone_number_validation_pattern">^[1-9][0-9]{9}$</string>
+    <string name="phone_number_validity_msg">Please enter valid phone-number</string>
+    <string name="sign_up_submit">Sign Up</string>
+    <string name="invalid_password">Please enter valid password.</string>
+    <string name="invalid_email_id">Please enter valid email-address.</string>
+    <string name="http_400">Error while processing request</string>
+    <string name="http_401">Authentication failed. Incorrect user email or password</string>
+    <string name="http_generic">Error while processing request</string>
+    <string name="server_conn_error">No Network Connectivity. Please Check internet Connection</string>
+    <string name="parsing_error">Error while parsing response.</string>
+    <string name="something_went_wrong">Oops... Something went Wrong. Please try again</string>
+    <string name="no_connection">No Network Connectivity. Please Check internet Connection.</string>
+    <string name="http_500">Error while processing request</string>
 </resources>

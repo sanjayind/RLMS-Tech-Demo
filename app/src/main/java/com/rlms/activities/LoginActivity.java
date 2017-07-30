@@ -11,10 +11,10 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -37,18 +37,18 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 import com.rlms.R;
-import com.rlms.model.RLMSAPIResponse;
-import com.rlms.model.RegisterTechnician;
-import com.rlms.model.Technician;
-import com.rlms.network.RetrofitBuilder;
-import com.rlms.network.webapi.APIRegisterTechnician;
-import com.rlms.permissions.LocationPermissions;
-import com.rlms.utils.NetworkUtils;
-import com.rlms.utils.Parser;
+import com.rlms.Repository.AuthRepository;
+import com.rlms.Repository.ReqPriority;
+import com.rlms.apiresponsehandler.ApiResponseListener;
+import com.rlms.exception.ApiException;
+import com.rlms.model.request.LoginRequest;
+import com.rlms.model.response.ApiResponse;
+import com.rlms.model.response.TechnicianInfo;
 import com.rlms.utils.Preferences;
 import com.rlms.utils.RLMSApplication;
 import com.rlms.utils.StringUtils;
@@ -62,12 +62,9 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+public class LoginActivity extends AppCompatActivity implements ApiResponseListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         ResultCallback<LocationSettingsResult> {
@@ -76,10 +73,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     Button buttonSignIn;
     @BindView(R.id.editTextMobile)
     EditText editTextMobile;
-//    @BindView(R.id.editTextAddress)
-//    EditText editTextAddress;
-//    @BindView(R.id.textViewSignUp)
-//    TextView textViewSignup;
 
     //firebase auth object
     private FirebaseAuth firebaseAuth;
@@ -140,12 +133,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
      */
     protected Location mCurrentLocation;
 
-
-    // Labels.
-    protected String mLatitudeLabel;
-    protected String mLongitudeLabel;
-    protected String mLastUpdateTimeLabel;
-
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -179,10 +166,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // Within {@code onPause()}, we pause location updates, but leave the
         // connection to GoogleApiClient intact.  Here, we resume receiving
         // location updates if the user has requested them.
-            if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
-                //  Toast.makeText(FusedLocationWithSettingsDialog.this, "location was already on so detecting location now", Toast.LENGTH_SHORT).show();
-                startLocationUpdates();
-            }
+        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+            //  Toast.makeText(FusedLocationWithSettingsDialog.this, "location was already on so detecting location now", Toast.LENGTH_SHORT).show();
+            startLocationUpdates();
+        }
 
     }
 
@@ -207,7 +194,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         mContext = LoginActivity.this;
 
-        Log.d(TAG,"12-May-2017 12:55:23 PM* Date time value = "+ StringUtils.parseDateToddMMyyyy(Calendar.getInstance().getTime().toString()));
+        Log.d(TAG, "12-May-2017 12:55:23 PM* Date time value = " + StringUtils.parseDateToddMMyyyy(Calendar.getInstance().getTime().toString()));
 
         rlmsApplication = (RLMSApplication) getApplicationContext();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -216,7 +203,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         //if the objects getcurrentuser method is not null
         //means user is already logged in
-        if(firebaseAuth.getCurrentUser() != null){
+        if (firebaseAuth.getCurrentUser() != null) {
 
             //opening profile activity
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -246,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 
-                if(i== EditorInfo.IME_ACTION_GO||i==R.id.buttonSignin){
+                if (i == EditorInfo.IME_ACTION_GO || i == R.id.buttonSignin) {
                     return true;
                 }
                 return false;
@@ -258,19 +245,19 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     @OnClick(R.id.buttonSignin)
-    public void signInClik(){
+    public void signInClik() {
         userLogin();
     }
 
 
     //method for user login
-    private void userLogin(){
+    private void userLogin() {
         final String mobileStr = editTextMobile.getText().toString().trim();
 //        String password  = editTextPassword.getText().toString().trim();
 
         //checking if mobileStr and passwords are empty
-        if(mobileStr.length() != 10){
-            Toast.makeText(this,getString(R.string.pl_enter_mobile),Toast.LENGTH_LONG).show();
+        if (mobileStr.length() != 10) {
+            Toast.makeText(this, getString(R.string.pl_enter_mobile), Toast.LENGTH_LONG).show();
             return;
         }
 //
@@ -303,28 +290,28 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 //                    }
 //                });
 
-        firebaseAuth.createUserWithEmailAndPassword(mobileStr+"@testtech.com", "12345"+getString(R.string.app_name))
+        firebaseAuth.createUserWithEmailAndPassword(mobileStr + "@testtech.com", "12345" + getString(R.string.app_name))
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         //if the task is successfull
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             //start the profile activity
-                            Log.d(TAG,"fcm login success");
-                            callRegisterUserToServer(firebaseAuth.getCurrentUser());
+                            Log.d(TAG, "fcm login success");
+//                            callRegisterUserToServer(firebaseAuth.getCurrentUser());
 
-                        }else{
-                            firebaseAuth.signInWithEmailAndPassword(mobileStr+"@testtech.com", "12345"+getString(R.string.app_name))
+                        } else {
+                            firebaseAuth.signInWithEmailAndPassword(mobileStr + "@testtech.com", "12345" + getString(R.string.app_name))
                                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
-                                            if(task.isSuccessful()) {
+                                            if (task.isSuccessful()) {
                                                 //start the profile activity
                                                 Log.d(TAG, "fcm login success");
                                                 callRegisterUserToServer(firebaseAuth.getCurrentUser());
-                                            }else{
-                                                Toast.makeText(mContext,getString(R.string.login_failed),Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(mContext, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -332,7 +319,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     }
                 });
 
-
+        callRegisterUserToServer(null);
     }
 
     /*
@@ -340,84 +327,88 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     * */
     private void callRegisterUserToServer(FirebaseUser currentUser) {
 
-        Log.d(TAG, "callRegisterUserToServer currentUser id = " + currentUser.getUid()
-                + " name = "+currentUser.getDisplayName()+" email = "+currentUser.getEmail()+
-                " provide id = "+currentUser.getProviderId());
+//        Log.d(TAG, "callRegisterUserToServer currentUser id = " + currentUser.getUid()
+//                + " name = " + currentUser.getDisplayName() + " email = " + currentUser.getEmail() +
+//                " provide id = " + currentUser.getProviderId());
 
-        APIRegisterTechnician apiRegisterTechnician = RetrofitBuilder.getClient().create(APIRegisterTechnician.class);
+//        APIRegisterTechnician apiRegisterTechnician = RetrofitBuilder.getClient().create(APIRegisterTechnician.class);
 
-        RegisterTechnician registerTechnician = new RegisterTechnician();
+        LoginRequest loginRequest = new LoginRequest();
 
         // hard core values
-        registerTechnician.setAddress(""+localityWithPincode);
-        registerTechnician.setAppRegId(currentUser.getUid());
-        registerTechnician.setContactNumber(""+editTextMobile.getText().toString().trim());
-        registerTechnician.setLongitude(latitude);
-        registerTechnician.setLatitude(longitude);
+        loginRequest.setAddress("" + localityWithPincode);
+//        loginRequest.setAppRegId(currentUser.getUid());
+        loginRequest.setAppRegId("YGqe45JvbsecI8Ip8Od");
+
+        loginRequest.setContactNumber("" + editTextMobile.getText().toString().trim());
+        loginRequest.setLongitude(latitude);
+        loginRequest.setLatitude(longitude);
 
         // call login api
-        Call<RLMSAPIResponse> call = apiRegisterTechnician.callLoginUser(registerTechnician);
+//        Call<RLMSAPIResponse> call = apiRegisterTechnician.callLoginUser(loginRequest);
+        AuthRepository.authenticateTechnician(this, ReqPriority.HIGH, loginRequest);
 
-        Log.d(TAG, "apiRegisterTechnician url = " + call.request().url());
+//        Log.d(TAG, "apiRegisterTechnician url = " + call.request().url());
 
-        call.enqueue(new Callback<RLMSAPIResponse>() {
-
-            @Override
-            public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
-
-                progressDialog.dismiss();
-
-                int statusCode = response.code();
-                Log.d(TAG, "apiRegisterTechnician onResponse: statusCode " + statusCode);
-                Log.d(TAG, "apiRegisterTechnician onResponse: message " + response.message());
-
-                if (statusCode == 200) {
-
-                    RLMSAPIResponse rlmsapiResponse = response.body();
-
-                    if(rlmsapiResponse != null) {
-                        Log.d(TAG, "string rlmsapiResponse = " + rlmsapiResponse.toString());
-                        if (rlmsapiResponse.isStatus()) {
-                            Log.d(TAG, "success registering user response = "+rlmsapiResponse.getResponse());
-                            Technician technician = Parser.getParsedTechnician(rlmsapiResponse.getResponse());
-                            Log.d(TAG, "success technician string = "+technician.toString());
-                            new Preferences(mContext).storeTechnicianDetails(technician);
-                            Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d(TAG, "rlmsapiResponse.isStatus() flag is false");
-                            Toast.makeText(mContext, "" + rlmsapiResponse.getResponse(), Toast.LENGTH_SHORT).show();
-                        }
-                    }else{
-                        Log.d(TAG, "flag false");
-                        Toast.makeText(mContext, "" + getString(R.string.failed_to_register_tech), Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    Log.d(TAG, "apiRegisterTechnician statusCode is not 200" + statusCode);
-                    Toast.makeText(mContext, "" + mContext.getString(R.string.failed_to_register_tech), Toast.LENGTH_LONG).show();
-                }
-
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-
-            }
-
-            @Override
-            public void onFailure(Call<RLMSAPIResponse> call, Throwable t) {
-                Log.d(TAG, "apiRegisterTechnician on failure wifi connect  = " + t.getMessage());
-                progressDialog.dismiss();
-
-                if (new NetworkUtils(mContext).isNetworkAvailable()) {
-
-                    Toast.makeText(mContext, "" + mContext.getString(R.string.failed_to_register_tech), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(mContext, mContext.getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
+//        call.enqueue(new Callback<RLMSAPIResponse>() {
+//
+//            @Override
+//            public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
+//
+//                progressDialog.dismiss();
+//
+//                int statusCode = response.code();
+//                Log.d(TAG, "apiRegisterTechnician onResponse: statusCode " + statusCode);
+//                Log.d(TAG, "apiRegisterTechnician onResponse: message " + response.message());
+//
+//                if (statusCode == 200) {
+//
+//                    RLMSAPIResponse rlmsapiResponse = response.body();
+//
+//                    if(rlmsapiResponse != null) {
+//                        Log.d(TAG, "string rlmsapiResponse = " + rlmsapiResponse.toString());
+//                        if (rlmsapiResponse.isStatus()) {
+//                            Log.d(TAG, "success registering user response = "+rlmsapiResponse.getResponse());
+//                            Technician technician = Parser.getParsedTechnician(rlmsapiResponse.getResponse());
+//                            Log.d(TAG, "success technician string = "+technician.toString());
+//                            new Preferences(mContext).storeTechnicianDetails(technician);
+//                            Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            Log.d(TAG, "rlmsapiResponse.isStatus() flag is false");
+//                            Toast.makeText(mContext, "" + rlmsapiResponse.getResponse(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }else{
+//                        Log.d(TAG, "flag false");
+//                        Toast.makeText(mContext, "" + getString(R.string.failed_to_register_tech), Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                } else {
+//                    Log.d(TAG, "apiRegisterTechnician statusCode is not 200" + statusCode);
+//                    Toast.makeText(mContext, "" + mContext.getString(R.string.failed_to_register_tech), Toast.LENGTH_LONG).show();
+//                }
+//
+//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//                finish();
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RLMSAPIResponse> call, Throwable t) {
+//                Log.d(TAG, "apiRegisterTechnician on failure wifi connect  = " + t.getMessage());
+//                progressDialog.dismiss();
+//
+//                if (new NetworkUtils(mContext).isNetworkAvailable()) {
+//
+//                    Toast.makeText(mContext, "" + mContext.getString(R.string.failed_to_register_tech), Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(mContext, mContext.getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            }
+//        });
 
     }
+
     //step 1
     protected synchronized void buildGoogleApiClient() {
         Log.i(TAG, "Building GoogleApiClient");
@@ -591,8 +582,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     /**
      * Invoked when settings dialog is opened and action taken
-     * @param locationSettingsResult
-     *	This below OnResult will be used by settings dialog actions.
+     *
+     * @param locationSettingsResult This below OnResult will be used by settings dialog actions.
      */
 
     //step 5
@@ -632,11 +623,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     /**
-     *	This OnActivityResult will listen when
-     *	case LocationSettingsStatusCodes.RESOLUTION_REQUIRED: is called on the above OnResult
+     * This OnActivityResult will listen when
+     * case LocationSettingsStatusCodes.RESOLUTION_REQUIRED: is called on the above OnResult
      */
     //step 6:
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -654,12 +644,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 break;
         }
     }
+
     /**
      * Sets the value of the UI fields for the location latitude, longitude and last update time.
      */
     private void updateLocationParams() {
         if (mCurrentLocation != null) {
-            latitude =  mCurrentLocation.getLatitude();
+            latitude = mCurrentLocation.getLatitude();
             longitude = mCurrentLocation.getLongitude();
 //            mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
 //                    mLastUpdateTime));
@@ -670,38 +661,62 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     /**
-     *	This updateCityAndPincode method uses Geocoder api to map the latitude and longitude into city location or pincode.
-     *	We can retrieve many details using this Geocoder class.
-     *
-     And yes the Geocoder will not work unless you have data connection or wifi connected to internet.
+     * This updateCityAndPincode method uses Geocoder api to map the latitude and longitude into city location or pincode.
+     * We can retrieve many details using this Geocoder class.
+     * <p>
+     * And yes the Geocoder will not work unless you have data connection or wifi connected to internet.
      */
 
 
-
-
-    private void updateCityAndPincode()
-    {
-        try
-        {
+    private void updateCityAndPincode() {
+        try {
             Geocoder gcd = new Geocoder(LoginActivity.this, Locale.getDefault());
             List<Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
-            if (addresses.size() > 0)
-            {
-                localityWithPincode = "City="+addresses.get(0).getLocality()+"\n"+
-                                      "Pincode="+addresses.get(0).getPostalCode();
-                //  System.out.println(addresses.get(0).getLocality());
+            if (addresses.size() > 0) {
+                localityWithPincode = "City=" + addresses.get(0).getLocality() + "\n" +
+                        "Pincode=" + addresses.get(0).getPostalCode();
             }
 
+        } catch (Exception e) {
+            Log.e(TAG, "exception:" + e.toString());
         }
-
-        catch (Exception e)
-        {
-            Log.e(TAG,"exception:"+e.toString());
-        }
-
 
 
     }
 
 
+    @Override
+    public void onSuccess(Object response, APIResponseMode apiResponseMode) {
+        Log.d(TAG, "success technician string");
+        if (response != null) {
+
+            ApiResponse techInfo = (ApiResponse) response;
+            if (techInfo != null && techInfo.status) {
+                TechnicianInfo result;
+                try {
+                    result = (new Gson().fromJson(techInfo.message, TechnicianInfo.class));
+
+                    new Preferences(mContext).storeTechnicianDetails(result);
+                    Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
+
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    finish();
+
+                } catch (Exception e) {
+                    Toast.makeText(mContext, "" + getString(R.string.failed_to_register_tech), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(mContext, "" + techInfo.message, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onError(Object response, ApiException exception) {
+        Log.d(TAG, "error technician");
+
+        Toast.makeText(mContext, "" + exception.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+
+
+    }
 }

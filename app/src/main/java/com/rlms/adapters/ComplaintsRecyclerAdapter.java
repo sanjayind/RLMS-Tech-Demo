@@ -5,7 +5,6 @@ package com.rlms.adapters;
  */
 
 import android.content.Context;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,13 +17,13 @@ import com.rlms.R;
 import com.rlms.callback.OnUpdateStatusClickListener;
 import com.rlms.callback.RecyclerViewItemClickListener;
 import com.rlms.constants.Params;
-import com.rlms.model.Complaint;
+import com.rlms.model.response.ComplaintsResponse;
 import com.rlms.utils.StringUtils;
 
 import java.util.List;
 
 public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRecyclerAdapter.SimpleViewHolder> {
-    private List<Complaint> mData;
+    private List<ComplaintsResponse> mData;
     private Context context;
     private int viewId = 0;
     private RecyclerViewItemClickListener itemClkLstnr , getDirectionsClikListnr;
@@ -47,7 +46,7 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
             getDirectionsTv = (TextView)itemView.findViewById(R.id.get_directions_tv);
         }
     }
-    public ComplaintsRecyclerAdapter(Context context, List<Complaint> arr, RecyclerViewItemClickListener itemClkLstnr,
+    public ComplaintsRecyclerAdapter(Context context, List<ComplaintsResponse> arr, RecyclerViewItemClickListener itemClkLstnr,
                                      RecyclerViewItemClickListener getDirectionsClikListnr, OnUpdateStatusClickListener onUpdateStatusClickListener) {
         this.mData = arr;
         this.context = context;
@@ -67,7 +66,7 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
     @Override
     public void onBindViewHolder(SimpleViewHolder holder, final int position) {
         if (mData.size() > 0) {
-            final Complaint complain = mData.get(position);
+            final ComplaintsResponse complain = mData.get(position);
 //            if(record.isActive()) {
             holder.complainTitleTv.setText("" + complain.getCustomerName());
             holder.addressTv.setText("" + complain.getLiftNumber());
@@ -76,8 +75,8 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
 
             Log.d(TAG,"status ="+complain.getStatus()+ " position  = "+position);
 
-            if(complain.getStatus().equalsIgnoreCase(Params.ASSIGNED)
-                    || complain.getStatus().equalsIgnoreCase(Params.PENDING)){
+            if(complain.getStatus() != null && (complain.getStatus().equalsIgnoreCase(Params.ASSIGNED)
+                    || complain.getStatus().equalsIgnoreCase(Params.PENDING))){
 
                 holder.statusIv.setImageResource(R.drawable.red_indicator);
 

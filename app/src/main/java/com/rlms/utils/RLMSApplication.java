@@ -2,12 +2,6 @@ package com.rlms.utils;
 
 import android.app.Application;
 import android.content.Context;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-
-import com.rlms.permissions.LocationPermissions;
 
 /**
  * Created by user on 12/4/17.
@@ -15,4 +9,20 @@ import com.rlms.permissions.LocationPermissions;
 
 public class RLMSApplication extends Application  {
 
+    private static RLMSApplication mApplication;
+
+    public static Context getAppContext() {
+        return mApplication;
+    }
+
+    public static RLMSApplication getApplicationInstance() {
+        return mApplication;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (mApplication == null)
+            mApplication = this;
+    }
 }

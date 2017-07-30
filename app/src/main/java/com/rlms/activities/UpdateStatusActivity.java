@@ -24,13 +24,13 @@ import com.rlms.callback.OnDateAndTimeSelectedListener;
 import com.rlms.callback.RecyclerViewItemClickListener;
 import com.rlms.constants.Params;
 import com.rlms.dialogs.DateAndTimePickerDialog;
-import com.rlms.model.Complaint;
 import com.rlms.model.GetVisitDetails;
 import com.rlms.model.RLMSAPIResponse;
 import com.rlms.model.SaveVisitDetails;
 import com.rlms.model.Technician;
 import com.rlms.model.VisitDetails;
 import com.rlms.model.VisitDetailsResponse;
+import com.rlms.model.response.ComplaintsResponse;
 import com.rlms.network.RetrofitBuilder;
 import com.rlms.network.webapi.APIGetSiteVisitDetails;
 import com.rlms.network.webapi.APIToMarkAsResolved;
@@ -39,18 +39,12 @@ import com.rlms.utils.Log;
 import com.rlms.utils.NetworkUtils;
 import com.rlms.utils.Parser;
 import com.rlms.utils.Preferences;
-import com.rlms.utils.StringUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.internal.Utils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,7 +76,7 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
     private NetworkUtils mNetworkUtils;
     String complaintTechMapId = "";
     String userEnteredRemarks = "";
-    Complaint complaint;
+    ComplaintsResponse complaint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +88,7 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             complaintTechMapId = extras.getString("complaintTechMapId", "" + 0);
-            complaint = (Complaint) extras.getSerializable("Complaint");
+            complaint = (ComplaintsResponse) extras.getSerializable("Complaint");
         }
 
 
@@ -318,7 +312,7 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
 
     }
 
-    public void markAsResolvedCall(Complaint complaint) {
+    public void markAsResolvedCall(ComplaintsResponse complaint) {
 
         mProgressDialog.setMessage(mContext.getString(R.string.updating_status));
         mProgressDialog.show();
@@ -327,7 +321,7 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
 
         APIToMarkAsResolved markAsResolvedApi = RetrofitBuilder.getClient().create(APIToMarkAsResolved.class);
 
-        Call<RLMSAPIResponse> call = markAsResolvedApi.updateComplaintStatus(new Complaint(complaint.getComplaintId(), Params.COMPLETED));
+        Call<RLMSAPIResponse> call = markAsResolvedApi.updateComplaintStatus(new ComplaintsResponse(complaint.getComplaintId(), Params.COMPLETED));
         Log.err(TAG, "markAsResolvedApi send call: " + call.request().url() + " mRetry:");
 
         call.enqueue(new Callback<RLMSAPIResponse>() {

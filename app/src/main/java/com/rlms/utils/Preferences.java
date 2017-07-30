@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.rlms.constants.AppConstants;
 import com.rlms.constants.Params;
 import com.rlms.model.Technician;
+import com.rlms.model.response.TechnicianInfo;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -20,7 +21,7 @@ public class Preferences {
         mContext = context;
     }
 
-    public void storeTechnicianDetails(Technician technician){
+    public void storeTechnicianDetails(TechnicianInfo technician){
 
         SharedPreferences.Editor editor = preferences.edit();
 

@@ -15,41 +15,44 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.rlms.R;
-import com.rlms.activities.MainActivity;
+import com.rlms.Repository.AuthRepository;
+import com.rlms.Repository.ReqPriority;
 import com.rlms.activities.MapsActivity;
 import com.rlms.activities.UpdateStatusActivity;
 import com.rlms.adapters.ComplaintsRecyclerAdapter;
+import com.rlms.apiresponsehandler.ApiResponseListener;
 import com.rlms.callback.OnFetchItemsFinishCallback;
 import com.rlms.callback.OnUpdateStatusClickListener;
 import com.rlms.callback.RecyclerViewItemClickListener;
 import com.rlms.constants.Params;
 import com.rlms.customviews.EmptySupportRecyclerView;
-import com.rlms.model.Complaint;
+import com.rlms.exception.ApiException;
 import com.rlms.model.RLMSAPIResponse;
 import com.rlms.model.Technician;
-import com.rlms.model.UserRole;
+import com.rlms.model.request.ComplaintsRequest;
+import com.rlms.model.response.ApiResponse;
+import com.rlms.model.response.ComplaintsResponse;
 import com.rlms.network.RetrofitBuilder;
-import com.rlms.network.webapi.APIGetComplaints;
 import com.rlms.network.webapi.APIToMarkAsResolved;
 import com.rlms.utils.Log;
 import com.rlms.utils.NetworkUtils;
-import com.rlms.utils.Parser;
 import com.rlms.utils.Preferences;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import butterknife.internal.Utils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinishCallback, OnUpdateStatusClickListener {
+public class ComplainHomeFragment extends Fragment implements ApiResponseListener, OnFetchItemsFinishCallback, OnUpdateStatusClickListener {
 
     @BindView(R.id.recyclerView1)
     EmptySupportRecyclerView complaintsRecyclerView;
@@ -58,7 +61,7 @@ public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinish
     private Unbinder unbinder;
 
     private static final String TAG = "ComplainHomeFragment";
-    private ArrayList<Complaint> complaintsArrayList = new ArrayList<>();
+    private ArrayList<ComplaintsResponse> complaintsArrayList = new ArrayList<>();
     private GridLayoutManager gridLayoutManager;
     ComplaintsRecyclerAdapter mAdapter;
     private Context mContext;
@@ -102,7 +105,7 @@ public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinish
         mProgressDialog.setMessage(mContext.getString(R.string.loading_complaints));
         mProgressDialog.show();
 
-        APIGetComplaints apiGetComplaints = RetrofitBuilder.getClient().create(APIGetComplaints.class);
+//        APIGetComplaints apiGetComplaints = RetrofitBuilder.getClient().create(APIGetComplaints.class);
 
         Preferences pref = new Preferences(getActivity());
         Technician technician = pref.getStoreTechnician();
@@ -111,66 +114,74 @@ public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinish
             userRoleID = technician.getUserRoleId();
         }
 
-        Call<RLMSAPIResponse> call = apiGetComplaints.getAllComplaintsFor(new UserRole(""+userRoleID));
-        Log.err(TAG, "apiGetComplaints send call: " + call.request().url() + " mRetry:");
+//        Call<RLMSAPIResponse> call = apiGetComplaints.getAllComplaintsFor(new UserRole(""+userRoleID));
 
-        call.enqueue(new Callback<RLMSAPIResponse>() {
+        ComplaintsRequest complaintsRequest = new ComplaintsRequest();
+        complaintsRequest.setUserRoleId(userRoleID);
+        AuthRepository.getAllComplaints(this, ReqPriority.HIGH, complaintsRequest);
 
-            @Override
-            public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
 
-                mProgressDialog.dismiss();
 
-                int statusCode = response.code();
-                RLMSAPIResponse RLMSAPIResponse = response.body();
 
-                Log.err(TAG, "send onResponse: statusCode " + statusCode);
-                Log.err(TAG, "send onResponse: message " + response.message());
-                Log.d(TAG, "success RLMSAPIResponse = " + RLMSAPIResponse.toString());
+//        Log.err(TAG, "apiGetComplaints send call: " + call.request().url() + " mRetry:");
 
-                if (statusCode == 200 || statusCode == 201) {
-
-                    Log.d(TAG, "success fecthed complaints");
-//                    Toast.makeText(mContext, "" + getString(R.string.successfully_fetched_complaints), Toast.LENGTH_SHORT).show();
-
-                    if (RLMSAPIResponse.isStatus()) {
-
-                        if (RLMSAPIResponse.getResponse().length() != 0) {
-
-                            Log.d(TAG, "not != 0 complaints response string = " + RLMSAPIResponse.getResponse());
-                            complaintsArrayList = Parser.getParsedComplaintsList(RLMSAPIResponse.getResponse());
-                            mAdapter = new ComplaintsRecyclerAdapter(mContext, complaintsArrayList, listItemClikListnr, getDirectionsClikListnr, ComplainHomeFragment.this);
-                            complaintsRecyclerView.setAdapter(mAdapter);
-                            mAdapter.notifyDataSetChanged();
-
-                        }
-                    } else {
-//                        Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    Log.err(TAG, "not 200 something went wrong");
-                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<RLMSAPIResponse> call, Throwable t) {
-
-                mProgressDialog.dismiss();
-
-                Log.d(TAG, "on failure getting complaints value  = " + t.getMessage());
-                t.printStackTrace();
-                if (mNetworkUtils.isNetworkAvailable()) {
-
-                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(mContext, getResources().getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
+//        call.enqueue(new Callback<RLMSAPIResponse>() {
+//
+//            @Override
+//            public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
+//
+//                mProgressDialog.dismiss();
+//
+//                int statusCode = response.code();
+//                RLMSAPIResponse RLMSAPIResponse = response.body();
+//
+//                Log.err(TAG, "send onResponse: statusCode " + statusCode);
+//                Log.err(TAG, "send onResponse: message " + response.message());
+//                Log.d(TAG, "success RLMSAPIResponse = " + RLMSAPIResponse.toString());
+//
+//                if (statusCode == 200 || statusCode == 201) {
+//
+//                    Log.d(TAG, "success fecthed complaints");
+////                    Toast.makeText(mContext, "" + getString(R.string.successfully_fetched_complaints), Toast.LENGTH_SHORT).show();
+//
+//                    if (RLMSAPIResponse.isStatus()) {
+//
+//                        if (RLMSAPIResponse.getResponse().length() != 0) {
+//
+//                            Log.d(TAG, "not != 0 complaints response string = " + RLMSAPIResponse.getResponse());
+////                            complaintsArrayList = Parser.getParsedComplaintsList(RLMSAPIResponse.getResponse());
+////                            mAdapter = new ComplaintsRecyclerAdapter(mContext, complaintsArrayList, listItemClikListnr, getDirectionsClikListnr, ComplainHomeFragment.this);
+////                            complaintsRecyclerView.setAdapter(mAdapter);
+////                            mAdapter.notifyDataSetChanged();
+//
+//                        }
+//                    } else {
+////                        Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                } else {
+//                    Log.err(TAG, "not 200 something went wrong");
+//                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RLMSAPIResponse> call, Throwable t) {
+//
+//                mProgressDialog.dismiss();
+//
+//                Log.d(TAG, "on failure getting complaints value  = " + t.getMessage());
+//                t.printStackTrace();
+//                if (mNetworkUtils.isNetworkAvailable()) {
+//
+//                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(mContext, getResources().getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            }
+//        });
 
     }
 
@@ -186,14 +197,12 @@ public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinish
     }
 
     @Override
-    public void onFetchItemsCallback(List<Complaint> fetchedComplaintsList) {
-
+    public void onFetchItemsCallback(List<ComplaintsResponse> fetchedComplaintsList) {
         Log.d(TAG, "onFetchItemsCallbackcalled fetchedCategoryList size = " + fetchedComplaintsList.size());
-        complaintsArrayList = (ArrayList<Complaint>) fetchedComplaintsList;
+        complaintsArrayList = (ArrayList<ComplaintsResponse>) fetchedComplaintsList;
         mAdapter = new ComplaintsRecyclerAdapter(mContext, complaintsArrayList, listItemClikListnr, getDirectionsClikListnr, ComplainHomeFragment.this);
         complaintsRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
-
     }
 
     RecyclerViewItemClickListener listItemClikListnr = new RecyclerViewItemClickListener() {
@@ -232,7 +241,7 @@ public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinish
         unbinder.unbind();
     }
 
-    public void markAsResolvedCall(Complaint complaint) {
+    public void markAsResolvedCall(ComplaintsResponse complaint) {
 
         mProgressDialog.setMessage(mContext.getString(R.string.updating_status));
         mProgressDialog.show();
@@ -241,7 +250,7 @@ public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinish
 
         APIToMarkAsResolved markAsResolvedApi = RetrofitBuilder.getClient().create(APIToMarkAsResolved.class);
 
-        Call<RLMSAPIResponse> call = markAsResolvedApi.updateComplaintStatus(new Complaint(complaint.getComplaintId(), Params.COMPLETED));
+        Call<RLMSAPIResponse> call = markAsResolvedApi.updateComplaintStatus(new ComplaintsResponse(complaint.getComplaintId(), Params.COMPLETED));
         Log.err(TAG, "markAsResolvedApi send call: " + call.request().url() + " mRetry:");
 
         call.enqueue(new Callback<RLMSAPIResponse>() {
@@ -342,5 +351,40 @@ public class ComplainHomeFragment extends Fragment implements OnFetchItemsFinish
         .putExtra("Complaint", (Serializable) complaintsArrayList.get(position)));
 
 
+    }
+
+    @Override
+    public void onSuccess(Object response, APIResponseMode apiResponseMode) {
+        Log.d(TAG,"on update item clicked pos = ");
+        mProgressDialog.dismiss();
+
+
+
+        ApiResponse techInfo = (ApiResponse) response;
+        if (techInfo != null && techInfo.status) {
+            ComplaintsResponse[] result;
+            try {
+                result = (ComplaintsResponse[])(new Gson().fromJson(techInfo.message, ComplaintsResponse[].class));
+
+                complaintsArrayList = new ArrayList<ComplaintsResponse>(Arrays.asList(result));
+                mAdapter = new ComplaintsRecyclerAdapter(mContext, complaintsArrayList, listItemClikListnr, getDirectionsClikListnr, ComplainHomeFragment.this);
+                complaintsRecyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+                Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
+
+
+            } catch (Exception e) {
+                Toast.makeText(mContext, "" + getString(R.string.failed_to_register_tech), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(mContext, "" + techInfo.message, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void onError(Object response, ApiException exception) {
+        Log.d(TAG,"on update item clicked pos = ");
+        mProgressDialog.dismiss();
     }
 }
