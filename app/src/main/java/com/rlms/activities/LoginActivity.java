@@ -51,6 +51,7 @@ import com.rlms.model.response.ApiResponse;
 import com.rlms.model.response.TechnicianInfo;
 import com.rlms.utils.Preferences;
 import com.rlms.utils.RLMSApplication;
+import com.rlms.utils.SharedPreferencesUtil;
 import com.rlms.utils.StringUtils;
 
 import java.text.DateFormat;
@@ -206,10 +207,10 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
         if (firebaseAuth.getCurrentUser() != null) {
 
             //opening profile activity
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
             //close this activity
-            finish();
+//            finish();
             return;
         }
 
@@ -260,35 +261,10 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
             Toast.makeText(this, getString(R.string.pl_enter_mobile), Toast.LENGTH_LONG).show();
             return;
         }
-//
-//        if(TextUtils.isEmpty(password)){
-//            Toast.makeText(this,getString(R.string.enter_password),Toast.LENGTH_LONG).show();
-//            return;
-//        }
 
-        //if the mobileStr and password are not empty
-        //displaying a progress dialog
 
         progressDialog.setMessage(getString(R.string.singing_in));
         progressDialog.show();
-
-//        //logging in the user
-//        firebaseAuth.signInWithEmailAndPassword(mobileStr+"@test.com", ""+getString(R.string.app_name))
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        progressDialog.dismiss();
-//                        //if the task is successfull
-//                        if(task.isSuccessful()){
-//                            //start the profile activity
-//                            Log.d(TAG,"fcm login success");
-//                            callRegisterUserToServer(firebaseAuth.getCurrentUser());
-//
-//                        }else{
-//                            Toast.makeText(mContext,getString(R.string.login_failed),Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
 
         firebaseAuth.createUserWithEmailAndPassword(mobileStr + "@testtech.com", "12345" + getString(R.string.app_name))
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -299,7 +275,7 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
                         if (task.isSuccessful()) {
                             //start the profile activity
                             Log.d(TAG, "fcm login success");
-//                            callRegisterUserToServer(firebaseAuth.getCurrentUser());
+                            callRegisterUserToServer(firebaseAuth.getCurrentUser());
 
                         } else {
                             firebaseAuth.signInWithEmailAndPassword(mobileStr + "@testtech.com", "12345" + getString(R.string.app_name))
@@ -319,7 +295,7 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
                     }
                 });
 
-        callRegisterUserToServer(null);
+//        callRegisterUserToServer(firebaseAuth.getCurrentUser());
     }
 
     /*
@@ -327,86 +303,19 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
     * */
     private void callRegisterUserToServer(FirebaseUser currentUser) {
 
-//        Log.d(TAG, "callRegisterUserToServer currentUser id = " + currentUser.getUid()
-//                + " name = " + currentUser.getDisplayName() + " email = " + currentUser.getEmail() +
-//                " provide id = " + currentUser.getProviderId());
-
-//        APIRegisterTechnician apiRegisterTechnician = RetrofitBuilder.getClient().create(APIRegisterTechnician.class);
-
         LoginRequest loginRequest = new LoginRequest();
 
         // hard core values
         loginRequest.setAddress("" + localityWithPincode);
-//        loginRequest.setAppRegId(currentUser.getUid());
-        loginRequest.setAppRegId("YGqe45JvbsecI8Ip8Od");
+        loginRequest.setAppRegId(currentUser.getUid());
+//        loginRequest.setAppRegId("YGqe45JvbsecI8Ip8Od");
 
         loginRequest.setContactNumber("" + editTextMobile.getText().toString().trim());
         loginRequest.setLongitude(latitude);
         loginRequest.setLatitude(longitude);
 
         // call login api
-//        Call<RLMSAPIResponse> call = apiRegisterTechnician.callLoginUser(loginRequest);
         AuthRepository.authenticateTechnician(this, ReqPriority.HIGH, loginRequest);
-
-//        Log.d(TAG, "apiRegisterTechnician url = " + call.request().url());
-
-//        call.enqueue(new Callback<RLMSAPIResponse>() {
-//
-//            @Override
-//            public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
-//
-//                progressDialog.dismiss();
-//
-//                int statusCode = response.code();
-//                Log.d(TAG, "apiRegisterTechnician onResponse: statusCode " + statusCode);
-//                Log.d(TAG, "apiRegisterTechnician onResponse: message " + response.message());
-//
-//                if (statusCode == 200) {
-//
-//                    RLMSAPIResponse rlmsapiResponse = response.body();
-//
-//                    if(rlmsapiResponse != null) {
-//                        Log.d(TAG, "string rlmsapiResponse = " + rlmsapiResponse.toString());
-//                        if (rlmsapiResponse.isStatus()) {
-//                            Log.d(TAG, "success registering user response = "+rlmsapiResponse.getResponse());
-//                            Technician technician = Parser.getParsedTechnician(rlmsapiResponse.getResponse());
-//                            Log.d(TAG, "success technician string = "+technician.toString());
-//                            new Preferences(mContext).storeTechnicianDetails(technician);
-//                            Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Log.d(TAG, "rlmsapiResponse.isStatus() flag is false");
-//                            Toast.makeText(mContext, "" + rlmsapiResponse.getResponse(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }else{
-//                        Log.d(TAG, "flag false");
-//                        Toast.makeText(mContext, "" + getString(R.string.failed_to_register_tech), Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                } else {
-//                    Log.d(TAG, "apiRegisterTechnician statusCode is not 200" + statusCode);
-//                    Toast.makeText(mContext, "" + mContext.getString(R.string.failed_to_register_tech), Toast.LENGTH_LONG).show();
-//                }
-//
-//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//                finish();
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<RLMSAPIResponse> call, Throwable t) {
-//                Log.d(TAG, "apiRegisterTechnician on failure wifi connect  = " + t.getMessage());
-//                progressDialog.dismiss();
-//
-//                if (new NetworkUtils(mContext).isNetworkAvailable()) {
-//
-//                    Toast.makeText(mContext, "" + mContext.getString(R.string.failed_to_register_tech), Toast.LENGTH_LONG).show();
-//                } else {
-//                    Toast.makeText(mContext, mContext.getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
-//
-//                }
-//            }
-//        });
-
     }
 
     //step 1
@@ -594,7 +503,6 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
         switch (status.getStatusCode()) {
             case LocationSettingsStatusCodes.SUCCESS:
                 Log.i(TAG, "All location settings are satisfied.");
-
 //                Toast.makeText(LoginActivity.this, "Location is already on.", Toast.LENGTH_SHORT).show();
                 startLocationUpdates();
                 break;
@@ -620,7 +528,6 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
                 break;
         }
     }
-
 
     /**
      * This OnActivityResult will listen when
@@ -659,14 +566,12 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
         }
     }
 
-
     /**
      * This updateCityAndPincode method uses Geocoder api to map the latitude and longitude into city location or pincode.
      * We can retrieve many details using this Geocoder class.
      * <p>
      * And yes the Geocoder will not work unless you have data connection or wifi connected to internet.
      */
-
 
     private void updateCityAndPincode() {
         try {
@@ -676,27 +581,24 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
                 localityWithPincode = "City=" + addresses.get(0).getLocality() + "\n" +
                         "Pincode=" + addresses.get(0).getPostalCode();
             }
-
         } catch (Exception e) {
             Log.e(TAG, "exception:" + e.toString());
         }
-
-
     }
-
 
     @Override
     public void onSuccess(Object response, APIResponseMode apiResponseMode) {
         Log.d(TAG, "success technician string");
         if (response != null) {
-
             ApiResponse techInfo = (ApiResponse) response;
             if (techInfo != null && techInfo.status) {
                 TechnicianInfo result;
                 try {
                     result = (new Gson().fromJson(techInfo.message, TechnicianInfo.class));
-
                     new Preferences(mContext).storeTechnicianDetails(result);
+
+                    SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil();
+                    sharedPreferencesUtil.setUserId(this, result.getUserId());
                     Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
 
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -713,10 +615,6 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
 
     @Override
     public void onError(Object response, ApiException exception) {
-        Log.d(TAG, "error technician");
-
         Toast.makeText(mContext, "" + exception.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-
-
     }
 }

@@ -30,7 +30,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:text="9096136234"
                 android:digits="1234567890"
                 android:hint="@string/enter_mobile_hint"
                 android:inputType="number"

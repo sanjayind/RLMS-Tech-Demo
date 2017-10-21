@@ -258,6 +258,4 @@ public class ComplaintsResponse implements Serializable {
     public void setComplaintTechMapId(int complaintTechMapId) {
         this.complaintTechMapId = complaintTechMapId;
     }
-
-
 }

@@ -19,17 +19,22 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.rlms.R;
+import com.rlms.Repository.AuthRepository;
+import com.rlms.Repository.ReqPriority;
 import com.rlms.adapters.VisitDetailsListAdapter;
+import com.rlms.apiresponsehandler.ApiResponseListener;
 import com.rlms.callback.OnDateAndTimeSelectedListener;
 import com.rlms.callback.RecyclerViewItemClickListener;
 import com.rlms.constants.Params;
 import com.rlms.dialogs.DateAndTimePickerDialog;
+import com.rlms.exception.ApiException;
 import com.rlms.model.GetVisitDetails;
-import com.rlms.model.RLMSAPIResponse;
 import com.rlms.model.SaveVisitDetails;
 import com.rlms.model.Technician;
 import com.rlms.model.VisitDetails;
 import com.rlms.model.VisitDetailsResponse;
+import com.rlms.model.request.ComplaintStatusRequest;
+import com.rlms.model.response.ApiResponse;
 import com.rlms.model.response.ComplaintsResponse;
 import com.rlms.network.RetrofitBuilder;
 import com.rlms.network.webapi.APIGetSiteVisitDetails;
@@ -41,6 +46,7 @@ import com.rlms.utils.Parser;
 import com.rlms.utils.Preferences;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,8 +59,7 @@ import retrofit2.Response;
  * Created by Swapnil on 4/12/2017.
  */
 
-public class UpdateStatusActivity extends AppCompatActivity implements OnDateAndTimeSelectedListener,RecyclerViewItemClickListener{
-
+public class UpdateStatusActivity extends AppCompatActivity implements OnDateAndTimeSelectedListener, RecyclerViewItemClickListener, ApiResponseListener {
     @BindView(R.id.start_visit_btn)
     Button startVisitBtn;
     @BindView(R.id.mark_resolve_btn)
@@ -91,12 +96,10 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
             complaint = (ComplaintsResponse) extras.getSerializable("Complaint");
         }
 
-
         // Initialize progress dialog
         mProgressDialog = new ProgressDialog(mContext);
         mProgressDialog.setCancelable(true);
         mProgressDialog.setCanceledOnTouchOutside(false);
-
 
         // Initialize progress dialog
         mProgressDialog = new ProgressDialog(mContext);
@@ -109,25 +112,20 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
         mNetworkUtils = new NetworkUtils(mContext);
 
         // adapter for recyclerview to display items for members with sections
-        mAdapter = new VisitDetailsListAdapter(mContext, visitDetailsArrayList,this);
+        mAdapter = new VisitDetailsListAdapter(mContext, visitDetailsArrayList, this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
         mProgressDialog = new ProgressDialog(this);
         startVisitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 //                createManualRemarkEntryDialog();
 //                callUpdateVisitAPI();
-                DateAndTimePickerDialog dateAndTimePickerDialog = new DateAndTimePickerDialog(mContext,UpdateStatusActivity.this);
+                DateAndTimePickerDialog dateAndTimePickerDialog = new DateAndTimePickerDialog(mContext, UpdateStatusActivity.this);
                 dateAndTimePickerDialog.show();
-
             }
         });
-
-
         getAllVisitDetails();
-
     }
 
     @OnClick(R.id.mark_resolve_btn)
@@ -142,9 +140,7 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
 
         mProgressDialog.setMessage(mContext.getString(R.string.loading_complaints));
         mProgressDialog.show();
-
         APIUpdateVisitDetails apiUpdateVisitDetails = RetrofitBuilder.getClient().create(APIUpdateVisitDetails.class);
-
         Preferences pref = new Preferences(mContext);
         Technician technician = pref.getStoreTechnician();
         int userRoleID = 0;
@@ -164,14 +160,10 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
 
         Call<VisitDetailsResponse> call = apiUpdateVisitDetails.validateAndSaveSiteVisitDetails(saveVisitDetails);
         Log.err(TAG, "apiUpdateVisitDetails send call: " + call.request().url() + " mRetry:");
-
         call.enqueue(new Callback<VisitDetailsResponse>() {
-
             @Override
             public void onResponse(Call<VisitDetailsResponse> call, Response<VisitDetailsResponse> response) {
-
                 mProgressDialog.dismiss();
-
                 int statusCode = response.code();
                 VisitDetailsResponse visitDetailsResponse = response.body();
 
@@ -180,11 +172,9 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
                 Log.d(TAG, "apiUpdateVisitDetails visitDetailsResponse = " + visitDetailsResponse.toString());
 
                 if (statusCode == 200 || statusCode == 201) {
-
                     Log.d(TAG, "success apiUpdateVisitDetails updated visit details");
                     Toast.makeText(mContext, "Successfully updated visit details", Toast.LENGTH_SHORT).show();
                     getAllVisitDetails();
-
 //                    if (visitDetailsResponse.isStatus()) {
 //
 //                        if (visitDetailsResponse.getResponse().length() != 0) {
@@ -202,38 +192,29 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
                     Log.err(TAG, "not 200 something went wrong");
                     Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
                 }
-
             }
 
             @Override
             public void onFailure(Call<VisitDetailsResponse> call, Throwable t) {
-
                 mProgressDialog.dismiss();
-
                 Log.d(TAG, "on failure getting complaints value  = " + t.getMessage());
                 t.printStackTrace();
                 if (mNetworkUtils.isNetworkAvailable()) {
-
                     Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(mContext, getResources().getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
-
                 }
             }
         });
-
     }
 
     /*
     * Call API to get all visit details
     * */
     private void getAllVisitDetails() {
-
         mProgressDialog.setMessage("Fetching all visit details...");
         mProgressDialog.show();
-
         APIGetSiteVisitDetails apiGetSiteVisitDetails = RetrofitBuilder.getClient().create(APIGetSiteVisitDetails.class);
-
         Preferences pref = new Preferences(mContext);
         Technician technician = pref.getStoreTechnician();
         int userRoleID = 0;
@@ -250,12 +231,9 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
         Log.err(TAG, "apiGetSiteVisitDetails send call: " + call.request().url() + " mRetry:");
 
         call.enqueue(new Callback<VisitDetailsResponse>() {
-
             @Override
             public void onResponse(Call<VisitDetailsResponse> call, Response<VisitDetailsResponse> response) {
-
                 mProgressDialog.dismiss();
-
                 int statusCode = response.code();
                 VisitDetailsResponse visitDetailsResponse = response.body();
 
@@ -264,18 +242,14 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
                 Log.d(TAG, "apiGetSiteVisitDetails visitDetailsResponse = " + visitDetailsResponse.toString());
 
                 if (statusCode == 200 || statusCode == 201) {
-
                     Log.d(TAG, "success apiGetSiteVisitDetails updated visit details");
 //                    Toast.makeText(mContext, "Successfully fetched visit details", Toast.LENGTH_SHORT).show();
-
                     if (visitDetailsResponse.isStatus()) {
-
                         if (visitDetailsResponse.getResponse().length() != 0) {
-
                             Log.d(TAG, "not != 0 visitDetailsResponse response string = " + visitDetailsResponse.getResponse());
-
                             visitDetailsArrayList = Parser.getParsedVisitDetailsList(visitDetailsResponse.getResponse());
-                            mAdapter = new VisitDetailsListAdapter(mContext, visitDetailsArrayList,UpdateStatusActivity.this);
+                            Collections.reverse(visitDetailsArrayList);
+                            mAdapter = new VisitDetailsListAdapter(mContext, visitDetailsArrayList, UpdateStatusActivity.this);
                             mRecyclerView.setAdapter(mAdapter);
                             mAdapter.notifyDataSetChanged();
 
@@ -290,14 +264,11 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
                     Log.err(TAG, "not 200 something went wrong");
                     Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
                 }
-
             }
 
             @Override
             public void onFailure(Call<VisitDetailsResponse> call, Throwable t) {
-
                 mProgressDialog.dismiss();
-
                 Log.d(TAG, "on failure getting visitDetailsResponse value  = " + t.getMessage());
                 t.printStackTrace();
                 if (mNetworkUtils.isNetworkAvailable()) {
@@ -305,80 +276,79 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
                     Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(mContext, getResources().getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
-
                 }
             }
         });
-
     }
 
     public void markAsResolvedCall(ComplaintsResponse complaint) {
-
         mProgressDialog.setMessage(mContext.getString(R.string.updating_status));
         mProgressDialog.show();
-
         Log.d(TAG, "markAsResolvedCall complaint.getComplaintId() = " + complaint.getComplaintId());
 
         APIToMarkAsResolved markAsResolvedApi = RetrofitBuilder.getClient().create(APIToMarkAsResolved.class);
+        ComplaintStatusRequest complaintStatusRequest = new ComplaintStatusRequest();
+        complaintStatusRequest.setComplaintId(complaint.getComplaintId());
+        complaintStatusRequest.setStatus(Params.COMPLETED);
+        AuthRepository.updateComplaintStatus(this, ReqPriority.HIGH, complaintStatusRequest);
 
-        Call<RLMSAPIResponse> call = markAsResolvedApi.updateComplaintStatus(new ComplaintsResponse(complaint.getComplaintId(), Params.COMPLETED));
-        Log.err(TAG, "markAsResolvedApi send call: " + call.request().url() + " mRetry:");
-
-        call.enqueue(new Callback<RLMSAPIResponse>() {
-
-            @Override
-            public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
-
-                mProgressDialog.dismiss();
-
-                int statusCode = response.code();
-                RLMSAPIResponse RLMSAPIResponse = response.body();
-
-                Log.err(TAG, "send onResponse: statusCode " + statusCode);
-                Log.err(TAG, "send onResponse: message " + response.message());
-                Log.d(TAG, "success RLMSAPIResponse = " + RLMSAPIResponse.toString());
-
-                if (statusCode == 200 || statusCode == 201) {
-
-                    Log.d(TAG, "success fetched complaints");
-
-                    if (RLMSAPIResponse.getResponse().length() != 0) {
-                        if (RLMSAPIResponse.isStatus() == true) {
-
-                            Log.d(TAG, "not != 0 complaints response string = " + RLMSAPIResponse.getResponse());
-                            Toast.makeText(mContext, "" + RLMSAPIResponse.getResponse(), Toast.LENGTH_SHORT).show();
-
-                        } else {
-                            Log.err(TAG, "not true something went wrong");
-                            Toast.makeText(mContext, "" + RLMSAPIResponse.getResponse(), Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    Log.err(TAG, "not 200 something went wrong");
-                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<RLMSAPIResponse> call, Throwable t) {
-
-                mProgressDialog.dismiss();
-
-                Log.d(TAG, "on failure getting complaints value  = " + t.getMessage());
-                t.printStackTrace();
-                if (mNetworkUtils.isNetworkAvailable()) {
-
-                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(mContext, getResources().getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
+//        Call<RLMSAPIResponse> call = markAsResolvedApi.updateComplaintStatus(new ComplaintsResponse(complaint.getComplaintId(), Params.COMPLETED));
+//        Log.err(TAG, "markAsResolvedApi send call: " + call.request().url() + " mRetry:");
+//        call.enqueue(new Callback<RLMSAPIResponse>() {
+//
+//            @Override
+//            public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
+//
+//                mProgressDialog.dismiss();
+//
+//                int statusCode = response.code();
+//                RLMSAPIResponse RLMSAPIResponse = response.body();
+//
+//                Log.err(TAG, "send onResponse: statusCode " + statusCode);
+//                Log.err(TAG, "send onResponse: message " + response.message());
+//                Log.d(TAG, "success RLMSAPIResponse = " + RLMSAPIResponse.toString());
+//
+//                if (statusCode == 200 || statusCode == 201) {
+//
+//                    Log.d(TAG, "success fetched complaints");
+//
+//                    if (RLMSAPIResponse.getResponse().length() != 0) {
+//                        if (RLMSAPIResponse.isStatus() == true) {
+//
+//                            Log.d(TAG, "not != 0 complaints response string = " + RLMSAPIResponse.getResponse());
+//                            Toast.makeText(mContext, "" + RLMSAPIResponse.getResponse(), Toast.LENGTH_SHORT).show();
+//
+//                        } else {
+//                            Log.err(TAG, "not true something went wrong");
+//                            Toast.makeText(mContext, "" + RLMSAPIResponse.getResponse(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    } else {
+//                        Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                } else {
+//                    Log.err(TAG, "not 200 something went wrong");
+//                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RLMSAPIResponse> call, Throwable t) {
+//
+//                mProgressDialog.dismiss();
+//
+//                Log.d(TAG, "on failure getting complaints value  = " + t.getMessage());
+//                t.printStackTrace();
+//                if (mNetworkUtils.isNetworkAvailable()) {
+//
+//                    Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(mContext, getResources().getString(R.string.network_connection_error), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            }
+//        });
     }
 
 
@@ -426,8 +396,6 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
             }
         });
         alertDialog.show();
-
-
     }
 
     /**
@@ -443,29 +411,45 @@ public class UpdateStatusActivity extends AppCompatActivity implements OnDateAnd
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     public void onDateAndTimeSelected(String fromDateStr, String fromTimeStr, String toDateStr, String toTimeStr, String remarks) {
-
-        Log.d(TAG," fromDateStr = "+fromDateStr+" fromTimeStr = "+fromTimeStr+" toDateStr = "+toDateStr+" toTimeStr = "+toTimeStr);
-        Log.d(TAG,"from date = |"+fromDateStr+" "+fromTimeStr);
-        Log.d(TAG,"to date = |"+toDateStr+" "+toTimeStr);
+        Log.d(TAG, " fromDateStr = " + fromDateStr + " fromTimeStr = " + fromTimeStr + " toDateStr = " + toDateStr + " toTimeStr = " + toTimeStr);
+        Log.d(TAG, "from date = |" + fromDateStr + " " + fromTimeStr);
+        Log.d(TAG, "to date = |" + toDateStr + " " + toTimeStr);
         this.userEnteredRemarks = remarks;
-
-        callUpdateVisitAPI(fromDateStr+" "+fromTimeStr,toDateStr+" "+toTimeStr);
-
+        callUpdateVisitAPI(fromDateStr + " " + fromTimeStr, toDateStr + " " + toTimeStr);
     }
 
     @Override
     public void OnItemClick(View v, int position) {
-
 //        VisitDetails visitDetails = visitDetailsArrayList.get(position);
 //
 //        Log.d(TAG,"clicked at pos = "+position+" tostring = "+visitDetails.toString());
 //
 //        callUpdateVisitAPI(visitDetails.getFromDateDtr(),visitDetails.getToDateStr());
+    }
 
+    @Override
+    public void onSuccess(Object response, APIResponseMode apiResponseMode) {
+        mProgressDialog.dismiss();
+        if (response != null) {
+            ApiResponse techInfo = (ApiResponse) response;
+            if (techInfo.status == true) {
+                Toast.makeText(mContext, "" + ((ApiResponse) response).message, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(mContext, "" + ((ApiResponse) response).message, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onError(Object response, ApiException exception) {
+        mProgressDialog.dismiss();
+        Toast.makeText(mContext, "" + getString(R.string.try_again), Toast.LENGTH_SHORT).show();
     }
 }

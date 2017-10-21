@@ -26,12 +26,12 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
     private List<ComplaintsResponse> mData;
     private Context context;
     private int viewId = 0;
-    private RecyclerViewItemClickListener itemClkLstnr , getDirectionsClikListnr;
+    private RecyclerViewItemClickListener itemClkLstnr, getDirectionsClikListnr;
     private String TAG = "ComplaintsAdapter";
     private OnUpdateStatusClickListener onUpdateStatusClickListener;
 
     public class SimpleViewHolder extends RecyclerView.ViewHolder {
-        TextView complainTitleTv, addressTv, detailsTv, pendingTv,markAsResolvedTv,getDirectionsTv,updateStatusTv;
+        TextView complainIdTv, complainTitleTv, addressTv, detailsTv, pendingTv, markAsResolvedTv, getDirectionsTv, updateStatusTv, complaintsDetails;
         ImageView statusIv;
 
         public SimpleViewHolder(View itemView) {
@@ -42,10 +42,13 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
             pendingTv = (TextView) itemView.findViewById(R.id.pending_tv);
             updateStatusTv = (TextView) itemView.findViewById(R.id.update_tv);
             statusIv = (ImageView) itemView.findViewById(R.id.status_iv);
-            markAsResolvedTv = (TextView)itemView.findViewById(R.id.mark_as_resolve_tv);
-            getDirectionsTv = (TextView)itemView.findViewById(R.id.get_directions_tv);
+            markAsResolvedTv = (TextView) itemView.findViewById(R.id.mark_as_resolve_tv);
+            getDirectionsTv = (TextView) itemView.findViewById(R.id.get_directions_tv);
+            complaintsDetails = ((TextView) itemView.findViewById(R.id.complaintsDetails));
+            complainIdTv = ((TextView) itemView.findViewById(R.id.complaints_id_name_tv));
         }
     }
+
     public ComplaintsRecyclerAdapter(Context context, List<ComplaintsResponse> arr, RecyclerViewItemClickListener itemClkLstnr,
                                      RecyclerViewItemClickListener getDirectionsClikListnr, OnUpdateStatusClickListener onUpdateStatusClickListener) {
         this.mData = arr;
@@ -72,15 +75,16 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
             holder.addressTv.setText("" + complain.getLiftNumber());
             holder.pendingTv.setText(StringUtils.getConvertedDate(complain.getRegistrationDate()));
             holder.detailsTv.setText(complain.getRemark());
+            holder.complainIdTv.setText("" + complain.getComplaintTechMapId());
 
-            Log.d(TAG,"status ="+complain.getStatus()+ " position  = "+position);
+            Log.d(TAG, "status =" + complain.getStatus() + " position  = " + position);
 
-            if(complain.getStatus() != null && (complain.getStatus().equalsIgnoreCase(Params.ASSIGNED)
-                    || complain.getStatus().equalsIgnoreCase(Params.PENDING))){
+            if (complain.getStatus() != null && (complain.getStatus().equalsIgnoreCase(Params.ASSIGNED)
+                    || complain.getStatus().equalsIgnoreCase(Params.PENDING))) {
 
                 holder.statusIv.setImageResource(R.drawable.red_indicator);
 
-                Log.d(TAG,"status assigned or pending");
+                Log.d(TAG, "status assigned or pending");
                 holder.markAsResolvedTv.setText(context.getString(R.string.mark_resolve));
                 holder.markAsResolvedTv.setAlpha(1f);
                 holder.markAsResolvedTv.setClickable(true);
@@ -96,8 +100,8 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
                 holder.getDirectionsTv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(getDirectionsClikListnr!=null){
-                            getDirectionsClikListnr.OnItemClick(view,position);
+                        if (getDirectionsClikListnr != null) {
+                            getDirectionsClikListnr.OnItemClick(view, position);
                         }
                     }
                 });
@@ -105,17 +109,17 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
                 holder.updateStatusTv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(onUpdateStatusClickListener!=null){
-                            onUpdateStatusClickListener.OnItemClick(view,position);
+                        if (onUpdateStatusClickListener != null) {
+                            onUpdateStatusClickListener.OnItemClick(view, position);
                         }
                     }
                 });
 
-            }else{
+            } else {
 
                 holder.statusIv.setImageResource(R.drawable.green_indicator);
 
-                Log.d(TAG,"status not assigned or pending");
+                Log.d(TAG, "status not assigned or pending");
                 holder.markAsResolvedTv.setText(context.getString(R.string.resolved));
                 holder.markAsResolvedTv.setAlpha((float) 0.5);
                 holder.markAsResolvedTv.setClickable(false);
@@ -127,8 +131,17 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
             holder.updateStatusTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(onUpdateStatusClickListener!=null){
-                        onUpdateStatusClickListener.OnItemClick(view,position);
+                    if (onUpdateStatusClickListener != null) {
+                        onUpdateStatusClickListener.OnItemClick(view, position);
+                    }
+                }
+            });
+
+            holder.complaintsDetails.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onUpdateStatusClickListener != null) {
+                        onUpdateStatusClickListener.OnDetailsClick(v, position);
                     }
                 }
             });

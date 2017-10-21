@@ -33,7 +33,7 @@ public class Params {
     * Used for complaints API
     * */
 
-    public static final String COMPLETED = "Completed";
+    public static final String COMPLETED = "Resolved";
     public static final String ASSIGNED = "Assigned";
     public static final String PENDING = "Pending";
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import com.rlms.Repository.AuthRepository;
 import com.rlms.Repository.ReqPriority;
 import com.rlms.activities.MapsActivity;
 import com.rlms.activities.UpdateStatusActivity;
+import com.rlms.activities.UploadPhotosActivity;
 import com.rlms.adapters.ComplaintsRecyclerAdapter;
 import com.rlms.apiresponsehandler.ApiResponseListener;
 import com.rlms.callback.OnFetchItemsFinishCallback;
@@ -35,6 +37,7 @@ import com.rlms.model.request.ComplaintsRequest;
 import com.rlms.model.response.ApiResponse;
 import com.rlms.model.response.ComplaintsResponse;
 import com.rlms.network.RetrofitBuilder;
+import com.rlms.network.webapi.APIGetComplaints;
 import com.rlms.network.webapi.APIToMarkAsResolved;
 import com.rlms.utils.Log;
 import com.rlms.utils.NetworkUtils;
@@ -43,6 +46,7 @@ import com.rlms.utils.Preferences;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -68,15 +72,14 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
     private ProgressDialog mProgressDialog;
     Log Log = new Log();
     private NetworkUtils mNetworkUtils;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public ComplainHomeFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = getActivity();
         mNetworkUtils = new NetworkUtils(mContext);
 
@@ -93,24 +96,26 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        mSwipeRefreshLayout = ((SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchComplaints();
+            }
+        });
         mProgressDialog = new ProgressDialog(mContext);
         mProgressDialog.setCancelable(false);
         mProgressDialog.setCanceledOnTouchOutside(false);
-
-        fetchComplaints();
     }
 
     private void fetchComplaints() {
-
         mProgressDialog.setMessage(mContext.getString(R.string.loading_complaints));
         mProgressDialog.show();
-
-//        APIGetComplaints apiGetComplaints = RetrofitBuilder.getClient().create(APIGetComplaints.class);
-
+        APIGetComplaints apiGetComplaints = RetrofitBuilder.getClient().create(APIGetComplaints.class);
         Preferences pref = new Preferences(getActivity());
         Technician technician = pref.getStoreTechnician();
-        int userRoleID =0;
-        if(technician!=null) {
+        int userRoleID = 0;
+        if (technician != null) {
             userRoleID = technician.getUserRoleId();
         }
 
@@ -119,9 +124,6 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
         ComplaintsRequest complaintsRequest = new ComplaintsRequest();
         complaintsRequest.setUserRoleId(userRoleID);
         AuthRepository.getAllComplaints(this, ReqPriority.HIGH, complaintsRequest);
-
-
-
 
 //        Log.err(TAG, "apiGetComplaints send call: " + call.request().url() + " mRetry:");
 
@@ -142,7 +144,7 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
 //                if (statusCode == 200 || statusCode == 201) {
 //
 //                    Log.d(TAG, "success fecthed complaints");
-////                    Toast.makeText(mContext, "" + getString(R.string.successfully_fetched_complaints), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext, "" + getString(R.string.successfully_fetched_complaints), Toast.LENGTH_SHORT).show();
 //
 //                    if (RLMSAPIResponse.isStatus()) {
 //
@@ -182,17 +184,16 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
 //                }
 //            }
 //        });
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        fetchComplaints();
     }
 
     @Override
     public void onPause() {
-
         super.onPause();
     }
 
@@ -209,7 +210,6 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
         @Override
         public void OnItemClick(View v, int position) {
             Log.err(TAG, "mark as resolved clicked");
-
 //            markAsResolvedCall(complaintsArrayList.get(position));
         }
     };
@@ -257,9 +257,7 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
 
             @Override
             public void onResponse(Call<RLMSAPIResponse> call, Response<RLMSAPIResponse> response) {
-
                 mProgressDialog.dismiss();
-
                 int statusCode = response.code();
                 RLMSAPIResponse RLMSAPIResponse = response.body();
 
@@ -325,9 +323,7 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_profile) {
             Toast.makeText(getActivity(), "Profile is clicked", Toast.LENGTH_SHORT).show();
@@ -342,49 +338,54 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
 
     @Override
     public void OnItemClick(View v, int position) {
-
-        Log.d(TAG,"on update item clicked pos = "+position);
+        Log.d(TAG, "on update item clicked pos = " + position);
         //opening profile activity
         startActivity(new Intent(getActivity(), UpdateStatusActivity.class)
-                .putExtra("complaintTechMapId",""
-                        +complaintsArrayList.get(position).getComplaintTechMapId())
-        .putExtra("Complaint", (Serializable) complaintsArrayList.get(position)));
+                .putExtra("complaintTechMapId", "" + complaintsArrayList.get(position).getComplaintTechMapId())
+                .putExtra("Complaint", (Serializable) complaintsArrayList.get(position)));
+    }
 
-
+    @Override
+    public void OnDetailsClick(View v, int position) {
+        Intent intent = new Intent(getActivity(), UploadPhotosActivity.class);
+        intent.putExtra("title", complaintsArrayList.get(position).getCustomerName());
+        intent.putExtra("details", complaintsArrayList.get(position).getRemark());
+        intent.putExtra("pending", complaintsArrayList.get(position).getRegistrationDate());
+        intent.putExtra("address", complaintsArrayList.get(position).getLiftNumber());
+        startActivity(intent);
     }
 
     @Override
     public void onSuccess(Object response, APIResponseMode apiResponseMode) {
-        Log.d(TAG,"on update item clicked pos = ");
+        Log.d(TAG, "on update item clicked pos = ");
         mProgressDialog.dismiss();
-
-
-
         ApiResponse techInfo = (ApiResponse) response;
         if (techInfo != null && techInfo.status) {
             ComplaintsResponse[] result;
             try {
-                result = (ComplaintsResponse[])(new Gson().fromJson(techInfo.message, ComplaintsResponse[].class));
+                result = (ComplaintsResponse[]) (new Gson().fromJson(techInfo.message, ComplaintsResponse[].class));
 
                 complaintsArrayList = new ArrayList<ComplaintsResponse>(Arrays.asList(result));
+                Collections.reverse(complaintsArrayList);
                 mAdapter = new ComplaintsRecyclerAdapter(mContext, complaintsArrayList, listItemClikListnr, getDirectionsClikListnr, ComplainHomeFragment.this);
                 complaintsRecyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
-                Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
-
-
+                mSwipeRefreshLayout.setRefreshing(false);
+//                Toast.makeText(mContext, "" + getString(R.string.tech_registration_succes), Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(mContext, "" + getString(R.string.failed_to_register_tech), Toast.LENGTH_SHORT).show();
             }
         } else {
+            mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(mContext, "" + techInfo.message, Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
     public void onError(Object response, ApiException exception) {
-        Log.d(TAG,"on update item clicked pos = ");
+        mSwipeRefreshLayout.setRefreshing(false);
+        Log.d(TAG, "on update item clicked pos = ");
         mProgressDialog.dismiss();
     }
 }

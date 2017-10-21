@@ -4,67 +4,72 @@ import com.google.gson.annotations.SerializedName;
 
 public class TechnicianInfo {
 
-//    {"userName":null,
-//            "firstName":"testFirst"
-//            ,"lastName":"TestLast",
-//            "companyName":"INDITECH",
-//            "contactNumber":"9096136234",
-//            "address":null,
-//            "emailId":null,
-//            "branchName":"Hinjewadi Branch",
-//            "userId":4,
-//            "branchCompanyMapId":8,
-//            "companyId":null,
-//            "userRoleId":17,
-//            "appRegId":null,
-//            "latitude":null,
-//            "longitude":null,
-//            "city":null,
-//            "area":null,
-//            "pinCode":null,
-//            "userRoleName":null}
-
     @SerializedName("branchCompanyMapId")
-     String branchCompanyMapId = "";
-    @SerializedName("branchName")
-     String branchName = "";
-    @SerializedName("companyName")
-     String companyName = "";
-    @SerializedName("firstName")
-     String firstName = "";
-    @SerializedName("lastName")
-     String lastName = "";
-    @SerializedName("userId")
-     String userId = "";
-    @SerializedName("userRoleId")
-     int userRoleId = 0;
-    @SerializedName("address")
-     String address = "";
-    @SerializedName("contactNumber")
-     String contactNumber = "";
-    @SerializedName("latitude")
-     double latitude = 0;
-    @SerializedName("longitude")
-     double longitude = 0;
-    @SerializedName("pinCode")
-     String pinCode = "";
-    @SerializedName("userRoleName")
-     String userRoleName = "";
-    @SerializedName("emailId")
-     String emailId = "";
-    @SerializedName("appRegId")
-     String appRegId = "";
-    @SerializedName("area")
-     String area = "";
-    @SerializedName("city")
-     String city = "";
-    @SerializedName("companyId")
-     String companyId = "";
-    @SerializedName("userName")
-    String userName = "";
+    String branchCompanyMapId;
 
+    @SerializedName("branchName")
+    String branchName;
+
+    @SerializedName("companyName")
+    String companyName;
+
+    @SerializedName("firstName")
+    String firstName;
+
+    @SerializedName("lastName")
+    String lastName;
+
+    @SerializedName("userId")
+    String userId;
+
+    @SerializedName("userRoleId")
+    int userRoleId;
+
+    @SerializedName("address")
+    String address;
+
+    @SerializedName("contactNumber")
+    String contactNumber;
+
+    @SerializedName("latitude")
+    double latitude;
+
+    @SerializedName("longitude")
+    double longitude;
+
+    @SerializedName("pinCode")
+    String pinCode;
+
+    @SerializedName("userRoleName")
+    String userRoleName;
+
+    @SerializedName("emailId")
+    String emailId;
+
+    @SerializedName("appRegId")
+    String appRegId;
+
+    @SerializedName("area")
+    String area;
+
+    @SerializedName("city")
+    String city;
+
+    @SerializedName("companyId")
+    String companyId;
+
+    @SerializedName("userName")
+    String userName;
 
     public TechnicianInfo() {
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getCompanyId() {
@@ -209,26 +214,5 @@ public class TechnicianInfo {
 
     public void setAppRegId(String appRegId) {
         this.appRegId = appRegId;
-    }
-
-    @Override
-    public String toString() {
-        return "Technician{" +
-                "branchCompanyMapId='" + branchCompanyMapId + '\'' +
-                ", branchName='" + branchName + '\'' +
-                ", companyName='" + companyName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", userId='" + userId + '\'' +
-                ", userRoleId=" + userRoleId +
-                ", address='" + address + '\'' +
-                ", contactNumber='" + contactNumber + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", pinCode='" + pinCode + '\'' +
-                ", userRoleName='" + userRoleName + '\'' +
-                ", emailId='" + emailId + '\'' +
-                ", appRegId='" + appRegId + '\'' +
-                '}';
     }
 }

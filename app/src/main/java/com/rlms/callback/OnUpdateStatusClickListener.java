@@ -10,4 +10,6 @@ public interface OnUpdateStatusClickListener {
 
     public void OnItemClick(View v, int position);
 
+    public void OnDetailsClick(View v, int position);
+
 }

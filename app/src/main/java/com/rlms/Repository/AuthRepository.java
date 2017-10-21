@@ -2,6 +2,7 @@ package com.rlms.Repository;
 
 import com.google.gson.Gson;
 import com.rlms.apiresponsehandler.ApiResponseListener;
+import com.rlms.model.request.ComplaintStatusRequest;
 import com.rlms.model.request.ComplaintsRequest;
 import com.rlms.model.request.LoginRequest;
 import com.rlms.model.response.ApiResponse;
@@ -13,6 +14,8 @@ import com.rlms.model.response.ApiResponse;
 public class AuthRepository {
     private static final String AUTHENTICATION_URL = "/RLMS/API/register/registerTechnicianDeviceByMblNo";
     private static final String COMPLAINTS_URL = "/RLMS/API/getAllComplaintsAssigned";
+    private static final String COMPLAINT_STATUS_URL = "/RLMS/API/updateComplaintStatus";
+    private static final String UPLOAD_IMAGE_URL = "RLMS/API/complaints/uploadPhotos";
 
     /**
      * login api..
@@ -39,4 +42,35 @@ public class AuthRepository {
         apiAsyncTask.startRequestExecution(restClient, reqPriority);
         return apiAsyncTask;
     }
+
+    /**
+     * update complaint status api..
+     */
+    public static ApiAsyncTask<ApiResponse> updateComplaintStatus(ApiResponseListener listener, ReqPriority reqPriority, ComplaintStatusRequest complaintStatusRequest) {
+        RestClient restClient = new RestClient(APIHelper.getBaseUrl() + COMPLAINT_STATUS_URL, HttpMethod.POST);
+        Gson gson = new Gson();
+        String body = gson.toJson(complaintStatusRequest);
+        restClient.setBody(body);
+        ApiAsyncTask<ApiResponse> apiAsyncTask = new ApiAsyncTask<ApiResponse>(listener, ApiResponse.class);
+        apiAsyncTask.startRequestExecution(restClient, reqPriority);
+        return apiAsyncTask;
+    }
+
+    /**
+     * Upload images
+     */
+//    public static ApiAsyncTask uploadUserPicture(String userId, String groupName, IDataResponseListener<UploadImageResponse> responseListener, ReqPriority reqPriority, ByteArrayInputStream stream) {
+//        FileUploadRestClient restClient = new FileUploadRestClient(getUploadPictureUrl(groupName, angle, resolution, userId), HttpMethod.POST);
+//        restClient.setBody(stream);
+//        ApiAsyncTask apiAsyncTask = new ApiAsyncTask<>(responseListener, UploadImageResponse.class);
+//        return apiAsyncTask.startRequestExecution(restClient, reqPriority);
+//    }
+//
+//    public static String getUploadPictureUrl(String groupName, PictureAngle angle, PictureResolution resolution, String userId) {
+//        JewelfieURIQueryStringEncoder encoder = new JewelfieURIQueryStringEncoder(String.format((JFNetworkLibAPIHelper.getBaseUrl() + UPLOAD_USER_PICTURES), userId != null ? userId : USER_ID));
+//        encoder.setQueryParam(JewelfieQueryParams.RESOLUTION, resolution.toString());
+//        encoder.setQueryParam(JewelfieQueryParams.PICTUREANGLE, angle.toString());
+//        encoder.setQueryParam(JewelfieQueryParams.GROUP_NAME, groupName);
+//        return encoder.build();
+//    }
 }

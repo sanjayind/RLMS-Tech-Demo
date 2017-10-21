@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1589FF</color>
-    <color name="colorPrimaryDark">#1589FF</color>
-    <color name="colorAccent">#1589FF</color>
+    <color name="colorPrimary">#59B4AE</color>
+    <color name="colorPrimaryDark">#44918C</color>
+    <color name="colorAccent">#94E4DF</color>
 
     <color name="Black">#000000</color>
     <color name="Gunmetal">#2C3539</color>
@@ -59,7 +59,7 @@
     <color name="OceanBlue">#2B65EC</color>
     <color name="BlueRibbon">#306EFF</color>
     <color name="BlueDress">#157DEC</color>
-    <color name="DodgerBlue">#1589FF</color>
+    <color name="DodgerBlue">#59B4AE</color>
     <color name="Cornflower_Blue">#6495ED</color>
     <color name="ButterflyBlue">#38ACEC</color>
     <color name="Iceberg">#56A5EC</color>

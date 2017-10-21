@@ -1,6 +1,5 @@
 package com.rlms.dialogs;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -49,13 +48,13 @@ public class DateAndTimePickerDialog extends Dialog {
 
     private Context context;
     String remarks = "";
-    private String fromDateStr = "",fromTimeStr = "", toDateStr = "", toTimeStr = "";
+    private String fromDateStr = "", fromTimeStr = "", toDateStr = "", toTimeStr = "";
     private OnDateAndTimeSelectedListener onDateAndTimeSelectedListener;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     public DateAndTimePickerDialog(Context context, OnDateAndTimeSelectedListener onDateAndTimeSelectedListener) {
         super(context);
-        this.context  = context;
+        this.context = context;
         this.onDateAndTimeSelectedListener = onDateAndTimeSelectedListener;
     }
 
@@ -93,8 +92,8 @@ public class DateAndTimePickerDialog extends Dialog {
                                                   int monthOfYear, int dayOfMonth) {
 
                                 fromDateStr = dayOfMonth + "-" + MONTHS[monthOfYear] + "-" + year;
-                                Log.d(TAG,"fromDateStr = "+fromDateStr);
-                                fromDateTv.setText(""+fromDateStr+" "+ fromTimeStr);
+                                Log.d(TAG, "fromDateStr = " + fromDateStr);
+                                fromDateTv.setText("" + fromDateStr + " " + fromTimeStr);
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
@@ -119,8 +118,8 @@ public class DateAndTimePickerDialog extends Dialog {
                                                   int monthOfYear, int dayOfMonth) {
 
                                 toDateStr = dayOfMonth + "-" + MONTHS[monthOfYear] + "-" + year;
-                                Log.d(TAG,"toDateStr = "+toDateStr);
-                                toDateTv.setText(""+toDateStr+" "+ toTimeStr);
+                                Log.d(TAG, "toDateStr = " + toDateStr);
+                                toDateTv.setText("" + toDateStr + " " + toTimeStr);
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog1.show();
@@ -133,7 +132,7 @@ public class DateAndTimePickerDialog extends Dialog {
             public void onClick(View view) {
 // TimePickerDialog Theme : THEME_HOLO_LIGHT
                 TimePickerDialog tpd = new TimePickerDialog(context,
-                        0,fromTimeListener,hour,minute,false);
+                        0, fromTimeListener, hour, minute, false);
                 tpd.show();
             }
         });
@@ -143,7 +142,7 @@ public class DateAndTimePickerDialog extends Dialog {
             public void onClick(View view) {
 // TimePickerDialog Theme : THEME_HOLO_LIGHT
                 TimePickerDialog tpd = new TimePickerDialog(context,
-                        0,toTimeListener,hour,minute,false);
+                        0, toTimeListener, hour, minute, false);
                 tpd.show();
             }
         });
@@ -154,29 +153,34 @@ public class DateAndTimePickerDialog extends Dialog {
 
                 remarks = editText.getText().toString().trim();
 
-                if(remarks.length()!=0) {
+                if (remarks.length() != 0) {
 
-                    if(fromDateStr.length()==0) {
-                        Toast.makeText(context,"Please select fromDate",Toast.LENGTH_SHORT).show();;
+                    if (fromDateStr.length() == 0) {
+                        Toast.makeText(context, "Please select fromDate", Toast.LENGTH_SHORT).show();
+                        ;
                         return;
                     }
-                    if(fromTimeStr.length()==0) {
-                        Toast.makeText(context,"Please select fromTime",Toast.LENGTH_SHORT).show();;
+                    if (fromTimeStr.length() == 0) {
+                        Toast.makeText(context, "Please select fromTime", Toast.LENGTH_SHORT).show();
+                        ;
                         return;
                     }
-                    if(toTimeStr.length()==0) {
-                        Toast.makeText(context,"Please select toTime",Toast.LENGTH_SHORT).show();;
+                    if (toTimeStr.length() == 0) {
+                        Toast.makeText(context, "Please select toTime", Toast.LENGTH_SHORT).show();
+                        ;
                         return;
                     }
-                    if(toDateStr.length()==0) {
-                        Toast.makeText(context,"Please select toDate",Toast.LENGTH_SHORT).show();;
+                    if (toDateStr.length() == 0) {
+                        Toast.makeText(context, "Please select toDate", Toast.LENGTH_SHORT).show();
+                        ;
                         return;
                     }
 
-                    onDateAndTimeSelectedListener.onDateAndTimeSelected(fromDateStr, fromTimeStr, toDateStr, toTimeStr,remarks );
+                    onDateAndTimeSelectedListener.onDateAndTimeSelected(fromDateStr, fromTimeStr, toDateStr, toTimeStr, remarks);
                     dismiss();
-                }else{
-                    Toast.makeText(context,"Please enter remarks",Toast.LENGTH_SHORT).show();;
+                } else {
+                    Toast.makeText(context, "Please enter remarks", Toast.LENGTH_SHORT).show();
+                    ;
                 }
             }
         });
@@ -195,9 +199,9 @@ public class DateAndTimePickerDialog extends Dialog {
         @Override
         public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
 
-            fromTimeStr = getAMPMString(hourOfDay,minute);
-            Log.d(TAG,"fromTimeStr = "+fromTimeStr);
-            fromDateTv.setText(""+fromDateStr+" "+ fromTimeStr);
+            fromTimeStr = getAMPMString(hourOfDay, minute);
+            Log.d(TAG, "fromTimeStr = " + fromTimeStr);
+            fromDateTv.setText("" + fromDateStr + " " + fromTimeStr);
 
         }
     };
@@ -206,9 +210,9 @@ public class DateAndTimePickerDialog extends Dialog {
         @Override
         public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
 
-            toTimeStr = getAMPMString(hourOfDay,minute);
-            Log.d(TAG,"toTimeStr = "+toTimeStr);
-            toDateTv.setText(""+toDateStr+" "+ toTimeStr);
+            toTimeStr = getAMPMString(hourOfDay, minute);
+            Log.d(TAG, "toTimeStr = " + toTimeStr);
+            toDateTv.setText("" + toDateStr + " " + toTimeStr);
 
         }
     };
@@ -242,7 +246,7 @@ public class DateAndTimePickerDialog extends Dialog {
         // Display the 12 hour format time in app interface
 //            tv.setText(hour_of_12_hour_format + " : " + minute + " : " + status);
 //        String.format("%02d:%02d", hourOfDay, minute)
-        return String.format("%02d:%02d",hour_of_12_hour_format , minute) + ":" +"00"+" "+ status;
+        return String.format("%02d:%02d", hour_of_12_hour_format, minute) + ":" + "00" + " " + status;
 
     }
 

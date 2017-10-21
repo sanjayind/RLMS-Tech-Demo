@@ -37,6 +37,7 @@
         android:layout_below="@+id/from_date_label_tv"
         android:padding="3dp"
         android:text="@string/to_date"
+        android:layout_marginTop="10dp"
         android:textAllCaps="true"
         android:textColor="@color/Black"
         android:textSize="14dp" />
@@ -48,6 +49,7 @@
         android:layout_below="@+id/from_date_value_tv"
         android:layout_toRightOf="@+id/to_date_label_tv"
         android:padding="3dp"
+        android:layout_marginTop="10dp"
         android:textAllCaps="false"
         android:textColor="@color/Black"
         android:textSize="14dp" />
@@ -58,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/to_date_label_tv"
         android:padding="3dp"
+        android:layout_marginTop="10dp"
         android:text="@string/remarks"
         android:textAllCaps="true"
         android:textColor="@color/Black"
@@ -65,11 +68,12 @@
 
     <TextView
         android:id="@+id/remark_value_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/to_date_label_tv"
         android:layout_toRightOf="@+id/remarks_lablel_tv"
         android:padding="3dp"
+        android:layout_marginTop="10dp"
         android:text=""
         android:textAllCaps="false"
         android:textColor="@color/Black"
@@ -82,14 +86,16 @@
         android:layout_below="@+id/remarks_lablel_tv"
         android:padding="3dp"
         android:text="@string/total_time"
+        android:layout_marginTop="10dp"
         android:textAllCaps="true"
         android:textColor="@color/Black"
         android:textSize="14dp" />
 
     <TextView
         android:id="@+id/total_time_value_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/remarks_lablel_tv"
         android:layout_toRightOf="@+id/total_time_lablel_tv"
         android:padding="3dp"
