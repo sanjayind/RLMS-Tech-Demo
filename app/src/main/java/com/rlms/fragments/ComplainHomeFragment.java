@@ -219,9 +219,9 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
         public void OnItemClick(View v, int position) {
             Log.err(TAG, "getDirections clicked");
 
-            String lat = "0.0", lng = "0.0";
-            lat = complaintsArrayList.get(position).getLatitude();
-            lng = complaintsArrayList.get(position).getLongitude();
+            String lat = "18.5905", lng = "73.7272";
+//            lat = complaintsArrayList.get(position).getLatitude();
+//            lng = complaintsArrayList.get(position).getLongitude();
             if (lat.equalsIgnoreCase("")) {
                 lat = "0.0";
             }

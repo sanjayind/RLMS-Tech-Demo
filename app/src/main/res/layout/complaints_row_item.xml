@@ -31,10 +31,33 @@
         android:textSize="14dp" />
 
     <TextView
+        android:id="@+id/customer_label_tv"
+        android:layout_width="@dimen/complaint_text_width"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="Customer"
+        android:layout_below="@+id/complaints_id_label_tv"
+        android:textAllCaps="true"
+        android:textColor="@color/Black"
+        android:textSize="14dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/customer_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/complaints_id_name_tv"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/complaints_title_label_tv"
+        android:padding="5dp"
+        android:textAllCaps="false"
+        android:textColor="@color/Black"
+        android:textSize="14dp" />
+
+    <TextView
         android:id="@+id/complaints_title_label_tv"
         android:layout_width="@dimen/complaint_text_width"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/complaints_id_label_tv"
+        android:layout_below="@+id/customer_label_tv"
         android:padding="5dp"
         android:text="@string/title_str"
         android:textAllCaps="true"
@@ -46,7 +69,7 @@
         android:id="@+id/complaints_title_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/complaints_id_label_tv"
+        android:layout_below="@+id/customer_name_tv"
         android:layout_toRightOf="@+id/complaints_title_label_tv"
         android:padding="5dp"
         android:textAllCaps="false"
@@ -77,10 +100,33 @@
         android:textSize="14dp" />
 
     <TextView
-        android:id="@+id/address_lablel_tv"
+        android:id="@+id/lift_label_tv"
         android:layout_width="@dimen/complaint_text_width"
         android:layout_height="wrap_content"
         android:layout_below="@+id/details_label_tv"
+        android:padding="5dp"
+        android:text="Lift No"
+        android:textAllCaps="true"
+        android:textColor="@color/Black"
+        android:textSize="14dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lift_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/details_label_tv"
+        android:layout_toRightOf="@+id/lift_label_tv"
+        android:padding="5dp"
+        android:textAllCaps="false"
+        android:textColor="@color/Black"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/address_lablel_tv"
+        android:layout_width="@dimen/complaint_text_width"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lift_label_tv"
         android:padding="5dp"
         android:text="@string/address_str"
         android:textAllCaps="true"
@@ -92,7 +138,7 @@
         android:id="@+id/address_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/details_label_tv"
+        android:layout_below="@+id/lift_tv"
         android:layout_toRightOf="@+id/address_lablel_tv"
         android:padding="5dp"
         android:text=""
@@ -139,14 +185,24 @@
         android:textColor="@color/White"
         android:textSize="14dp" />
 
+    <TextView
+        android:id="@+id/status_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/status_iv"
+        android:padding="5dp"
+        android:textAllCaps="false"
+        android:textColor="@color/Black"
+        android:textSize="12dp" />
+
     <ImageView
         android:id="@+id/status_iv"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_alignParentRight="true"
         android:layout_alignRight="@+id/complaints_title_name_tv"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/green_indicator" />
 
     <LinearLayout

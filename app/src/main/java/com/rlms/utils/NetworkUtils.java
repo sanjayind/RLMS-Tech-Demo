@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
 public class NetworkUtils {
@@ -54,5 +55,8 @@ public class NetworkUtils {
 
         return ssid;
     }
-
+    public static boolean isMobileAvailable(Context context) {
+        TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return (tel.getNetworkOperator() != null && !tel.getNetworkOperator().equals(""));
+    }
 }

@@ -31,7 +31,7 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
     private OnUpdateStatusClickListener onUpdateStatusClickListener;
 
     public class SimpleViewHolder extends RecyclerView.ViewHolder {
-        TextView complainIdTv, complainTitleTv, addressTv, detailsTv, pendingTv, markAsResolvedTv, getDirectionsTv, updateStatusTv, complaintsDetails;
+        TextView statusTv, customerName, liftNo, complainIdTv, complainTitleTv, addressTv, detailsTv, pendingTv, markAsResolvedTv, getDirectionsTv, updateStatusTv, complaintsDetails;
         ImageView statusIv;
 
         public SimpleViewHolder(View itemView) {
@@ -46,6 +46,9 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
             getDirectionsTv = (TextView) itemView.findViewById(R.id.get_directions_tv);
             complaintsDetails = ((TextView) itemView.findViewById(R.id.complaintsDetails));
             complainIdTv = ((TextView) itemView.findViewById(R.id.complaints_id_name_tv));
+            liftNo = ((TextView) itemView.findViewById(R.id.lift_tv));
+            customerName = ((TextView) itemView.findViewById(R.id.customer_name_tv));
+            statusTv = ((TextView) itemView.findViewById(R.id.status_tv));
         }
     }
 
@@ -70,20 +73,27 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
     public void onBindViewHolder(SimpleViewHolder holder, final int position) {
         if (mData.size() > 0) {
             final ComplaintsResponse complain = mData.get(position);
-//            if(record.isActive()) {
-            holder.complainTitleTv.setText("" + complain.getCustomerName());
-            holder.addressTv.setText("" + complain.getLiftNumber());
+            if (complain.getTitle() != null && !complain.getTitle().isEmpty()) {
+                holder.complainTitleTv.setText("" + complain.getTitle());
+            } else {
+                holder.complainTitleTv.setText("-");
+            }
+            holder.customerName.setText("" + complain.getCustomerName());
+            if (complain.getLiftAddress() != null && !complain.getLiftAddress().isEmpty()) {
+                holder.addressTv.setText("" + complain.getLiftAddress());
+            } else {
+                holder.addressTv.setText("-");
+            }
+            holder.liftNo.setText("" + complain.getLiftNumber());
             holder.pendingTv.setText(StringUtils.getConvertedDate(complain.getRegistrationDate()));
             holder.detailsTv.setText(complain.getRemark());
-            holder.complainIdTv.setText("" + complain.getComplaintTechMapId());
+            holder.complainIdTv.setText("" + complain.getComplaintId());
+            holder.statusTv.setText("" + complain.getStatus());
 
             Log.d(TAG, "status =" + complain.getStatus() + " position  = " + position);
 
-            if (complain.getStatus() != null && (complain.getStatus().equalsIgnoreCase(Params.ASSIGNED)
-                    || complain.getStatus().equalsIgnoreCase(Params.PENDING))) {
-
+            if (complain.getStatus().equalsIgnoreCase(Params.PENDING)) {
                 holder.statusIv.setImageResource(R.drawable.red_indicator);
-
                 Log.d(TAG, "status assigned or pending");
                 holder.markAsResolvedTv.setText(context.getString(R.string.mark_resolve));
                 holder.markAsResolvedTv.setAlpha(1f);
@@ -114,11 +124,40 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
                         }
                     }
                 });
+            } else if (complain.getStatus() != null && (complain.getStatus().equalsIgnoreCase(Params.ASSIGNED))) {
+                holder.statusIv.setImageResource(R.drawable.orange_indicator);
+                Log.d(TAG, "status assigned or pending");
+                holder.markAsResolvedTv.setText(context.getString(R.string.mark_resolve));
+                holder.markAsResolvedTv.setAlpha(1f);
+                holder.markAsResolvedTv.setClickable(true);
+                holder.markAsResolvedTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (itemClkLstnr != null) {
+                            itemClkLstnr.OnItemClick(view, position);
+                        }
+                    }
+                });
 
+                holder.getDirectionsTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (getDirectionsClikListnr != null) {
+                            getDirectionsClikListnr.OnItemClick(view, position);
+                        }
+                    }
+                });
+
+                holder.updateStatusTv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (onUpdateStatusClickListener != null) {
+                            onUpdateStatusClickListener.OnItemClick(view, position);
+                        }
+                    }
+                });
             } else {
-
                 holder.statusIv.setImageResource(R.drawable.green_indicator);
-
                 Log.d(TAG, "status not assigned or pending");
                 holder.markAsResolvedTv.setText(context.getString(R.string.resolved));
                 holder.markAsResolvedTv.setAlpha((float) 0.5);
@@ -145,7 +184,6 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
                     }
                 }
             });
-
         }
     }
 
@@ -156,5 +194,4 @@ public class ComplaintsRecyclerAdapter extends RecyclerView.Adapter<ComplaintsRe
         }
         return mData.size();
     }
-
 }
