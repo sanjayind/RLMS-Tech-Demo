@@ -219,13 +219,21 @@ public class ComplainHomeFragment extends Fragment implements ApiResponseListene
         public void OnItemClick(View v, int position) {
             Log.err(TAG, "getDirections clicked");
 
-            String lat = "18.5905", lng = "73.7272";
-//            lat = complaintsArrayList.get(position).getLatitude();
-//            lng = complaintsArrayList.get(position).getLongitude();
-            if (lat.equalsIgnoreCase("")) {
+//            String lat = "18.5905", lng = "73.7272";
+            String lat = complaintsArrayList.get(position).getLatitude();
+            String lng = complaintsArrayList.get(position).getLongitude();
+            if (lat != null && lat.equalsIgnoreCase("")) {
                 lat = "0.0";
             }
-            if (lng.equalsIgnoreCase("")) {
+            if (lng != null && lng.equalsIgnoreCase("")) {
+                lng = "0.0";
+            }
+            if (lat == null)
+            {
+                lat = "0.0";
+            }
+            if (lng == null)
+            {
                 lng = "0.0";
             }
             Intent launchMap = new Intent(getActivity(), MapsActivity.class);

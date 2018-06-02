@@ -8,10 +8,10 @@
 
     <ImageView
         android:id="@+id/splash_page_icon_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/loplogo" />
 
     <include
         layout="@layout/loading_view"

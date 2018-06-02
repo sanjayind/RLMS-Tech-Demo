@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.rlms.R;
 import com.rlms.Repository.AuthRepository;
@@ -307,7 +308,8 @@ public class LoginActivity extends AppCompatActivity implements ApiResponseListe
 
         // hard core values
         loginRequest.setAddress("" + localityWithPincode);
-        loginRequest.setAppRegId(currentUser.getUid());
+//        loginRequest.setAppRegId(currentUser.getUid());
+        loginRequest.setAppRegId(FirebaseInstanceId.getInstance().getToken());
 //        loginRequest.setAppRegId("YGqe45JvbsecI8Ip8Od");
 
         loginRequest.setContactNumber("" + editTextMobile.getText().toString().trim());

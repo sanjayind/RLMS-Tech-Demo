@@ -2,8 +2,11 @@ package com.rlms.Repository;
 
 import com.google.gson.Gson;
 import com.rlms.apiresponsehandler.ApiResponseListener;
+import com.rlms.model.LiftDetails;
 import com.rlms.model.request.ComplaintStatusRequest;
 import com.rlms.model.request.ComplaintsRequest;
+import com.rlms.model.request.LiftDetailsRequest;
+import com.rlms.model.request.LiftsReqest;
 import com.rlms.model.request.LoginRequest;
 import com.rlms.model.response.ApiResponse;
 
@@ -16,6 +19,11 @@ public class AuthRepository {
     private static final String COMPLAINTS_URL = "/RLMS/API/getAllComplaintsAssigned";
     private static final String COMPLAINT_STATUS_URL = "/RLMS/API/updateComplaintStatus";
     private static final String UPLOAD_IMAGE_URL = "RLMS/API/complaints/uploadPhotos";
+    private static final String LIFTS_URL = "/RLMS/API/lift/getApplicableLifts";
+    private static final String LIFT_Details_URL = "/RLMS/API/lift/getLiftParameters";
+    private static final String UPDATE_LIFT_Details_URL = "/RLMS/API/lift/updateLiftDetails";
+
+
 
     /**
      * login api..
@@ -43,6 +51,43 @@ public class AuthRepository {
         return apiAsyncTask;
     }
 
+    /**
+     * get all lifts api..
+     */
+    public static ApiAsyncTask<ApiResponse> getAllLifts(ApiResponseListener listener, ReqPriority reqPriority, LiftsReqest liftsReqest) {
+        RestClient restClient = new RestClient(APIHelper.getBaseUrl() + LIFTS_URL, HttpMethod.POST);
+        Gson gson = new Gson();
+        String body = gson.toJson(liftsReqest);
+        restClient.setBody(body);
+        ApiAsyncTask<ApiResponse> apiAsyncTask = new ApiAsyncTask<ApiResponse>(listener, ApiResponse.class);
+        apiAsyncTask.startRequestExecution(restClient, reqPriority);
+        return apiAsyncTask;
+    }
+
+    /**
+     * get lift details api..
+     */
+    public static ApiAsyncTask<ApiResponse> getLiftDetails(ApiResponseListener listener, ReqPriority reqPriority, LiftDetailsRequest liftDetailsRequest) {
+        RestClient restClient = new RestClient(APIHelper.getBaseUrl() + LIFT_Details_URL, HttpMethod.POST);
+        Gson gson = new Gson();
+        String body = gson.toJson(liftDetailsRequest);
+        restClient.setBody(body);
+        ApiAsyncTask<ApiResponse> apiAsyncTask = new ApiAsyncTask<ApiResponse>(listener, ApiResponse.class);
+        apiAsyncTask.startRequestExecution(restClient, reqPriority);
+        return apiAsyncTask;
+    }
+    /**
+     * update lift details api..
+     */
+    public static ApiAsyncTask<ApiResponse> updateLiftDetails(ApiResponseListener listener, ReqPriority reqPriority, LiftDetails liftDetailsRequest) {
+        RestClient restClient = new RestClient(APIHelper.getBaseUrl() + UPDATE_LIFT_Details_URL, HttpMethod.POST);
+        Gson gson = new Gson();
+        String body = gson.toJson(liftDetailsRequest);
+        restClient.setBody(body);
+        ApiAsyncTask<ApiResponse> apiAsyncTask = new ApiAsyncTask<ApiResponse>(listener, ApiResponse.class);
+        apiAsyncTask.startRequestExecution(restClient, reqPriority);
+        return apiAsyncTask;
+    }
     /**
      * update complaint status api..
      */

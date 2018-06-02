@@ -1,6 +1,11 @@
 package com.rlms.activities;
 
+import android.app.ActivityManager;
+import android.app.KeyguardManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +20,11 @@ import android.view.MenuItem;
 import com.rlms.R;
 import com.rlms.core.LocationService;
 import com.rlms.fragments.ComplainHomeFragment;
+
+import java.util.List;
+
+import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     ComplainHomeFragment complainHomeFragment = new ComplainHomeFragment();
@@ -65,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_lift_config) {
 
         } else if (id == R.id.nav_update_params) {
-
+            startActivity(new Intent(getApplicationContext(), AllLiftsActivity.class));
         } else if (id == R.id.nav_upload_photos) {
         }
 
@@ -86,4 +96,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private boolean isAppInForeground(Context context) {
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            ActivityManager am = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+            ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
+            String foregroundTaskPackageName = foregroundTaskInfo.topActivity.getPackageName();
+
+            return foregroundTaskPackageName.toLowerCase().equals(context.getPackageName().toLowerCase());
+        } else {
+            ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+            ActivityManager.getMyMemoryState(appProcessInfo);
+            if (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE) {
+                return true;
+            }
+
+            KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            // App is foreground, but screen is locked, so show notification
+            return km.inKeyguardRestrictedInputMode();
+        }
+    }
 }

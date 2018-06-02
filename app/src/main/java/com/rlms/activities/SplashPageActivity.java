@@ -89,18 +89,4 @@ public class SplashPageActivity extends AppCompatActivity {
             }
         });
     }
-
-    /**
-     * 1. If user exists, then go to landing/main page
-     */
-    protected void performUserLogin() {
-//        final UserDao userDao = new UserDao();
-//        UserDataManager.getInstance().setAppUser(userDao.getUser());
-//        User user = UserDataManager.getInstance().getAppUser();//User.getUser();
-//        if (user != null && !TextUtils.isEmpty(user.getAccessToken())) {
-//            validateTenantSetting();
-//        } else {
-//            loginAsGuestUser();
-//        }
-    }
 }

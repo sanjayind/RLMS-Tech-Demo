@@ -5,5 +5,6 @@ package com.rlms.Repository;
  */
 public class
 APIConstants {
-    public static final String BASE_URL = "http://139.162.5.222:8000/";
+    //public static final String BASE_URL = "http://139.162.5.222:8000/";
+    public static final String BASE_URL = "http://139.162.5.222/";
 }

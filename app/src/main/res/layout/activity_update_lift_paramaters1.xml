@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/liftParentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:id="@+id/liftScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:background="@color/TiffanyBlue"
+                    android:gravity="center"
+                    android:text="Lift Information"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Lift Number *"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/liftNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:background="@color/TiffanyBlue"
+                    android:gravity="center"
+                    android:text="Control Panel Details"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Door Type"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/doorType"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="No Of stops"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/noOfStops"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:inputType="number"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Machine Type"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/machineType"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Machine Current"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/machineCurrent"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Machine Capacity"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/machineCapacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Break Voltage"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/breakVoltage"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Panel Make"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/panelMake"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Simplex/Duplex"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/simplexDuplext"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="A.D. Make"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/adMake"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Fire Mode"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/fireMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Wiring Scheme"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/wiringScheme"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:background="@color/TiffanyBlue"
+                    android:gravity="center"
+                    android:text="ARD Details"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="No Of batteries"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/numberOfBatteries"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:inputType="number"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Battery Capacity"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/batteryCapacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Battery Make"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/batteryMake"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:background="@color/TiffanyBlue"
+                    android:gravity="center"
+                    android:text="COP Details"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="COP Make"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/copMake"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Alarm Battery"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/alarmBattery"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Access Control"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/accessControl"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:background="@color/TiffanyBlue"
+                    android:gravity="center"
+                    android:text="LOP Details"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="LOP Make"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/lopMake"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:text="Collective Type"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/collectiveType"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="8"
+                    android:background="@drawable/border_view"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/Granite"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <Button
+            android:id="@+id/submit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:background="@color/ForestGreen"
+            android:text="Submit"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/loadingLayout"
+        layout="@layout/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/splash_page_icon_view"
+        android:layout_centerInParent="true" />
+
+</FrameLayout>
+

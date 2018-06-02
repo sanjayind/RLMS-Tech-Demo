@@ -84,7 +84,7 @@
     <string name="remarks_title">Add some Description or remark about the visit</string>
     <string name="total_time">Total Time</string>
 
-<!--added new strings-->
+    <!--added new strings-->
     <string name="generic_error_and_retry">Oops.. Something went wrong. Try again?</string>
     <string name="email_hint">Email Address</string>
     <string name="password_hint2">Password</string>
